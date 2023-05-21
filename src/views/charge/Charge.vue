@@ -137,13 +137,12 @@
                                 </h4>
                             </v-col>
                             <!-- <v-col cols="9" v-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.rate_amt - (getChargeConfirm.res.rate_amt * 0.1)) < 0 -->
-                            <v-col cols="9" v-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.rate_amt - (getChargeConfirm.res.rate_amt * (getChargeConfirm.res.sales_discount_rate / 100))) < 0
+                            <!-- <v-col cols="9" v-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.rate_amt - (getChargeConfirm.res.rate_amt * (getChargeConfirm.res.sales_discount_rate / 100))) < 0
                                 && getChargeConfirm.res.charge_type == 'SMARTEL'">
                                 <h4 class="font-weight-bold text-capitalize ls-0 align-left mt-5" style="color:#FF0000">
                                     예치금이 부족합니다
                                 </h4>
                             </v-col>
-                            <!-- <v-col cols="9" v-else-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.face_price - (getChargeConfirm.res.face_price * 0.1)) < 0 -->
                             <v-col cols="9" v-else-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.face_price - (getChargeConfirm.res.face_price * (getChargeConfirm.res.sales_discount_rate / 100))) < 0
                                 && getChargeConfirm.res.charge_type == 'POWERCALL'">
                                 <h4 class="font-weight-bold text-capitalize ls-0 align-left mt-5" style="color:#FF0000">
@@ -153,16 +152,42 @@
                             <v-col cols="9" v-else>
                                 <h4 v-if="getChargeConfirm.res.charge_type == 'POWERCALL'"
                                     class="font-weight-bold text-capitalize ls-0 align-left mt-5" style="color:#FF0000">
-                                    <!-- {{ getChargeConfirm.res.face_price - (getChargeConfirm.res.face_price * 0.1) }}원 -->
                                     {{ getChargeConfirm.res.face_price - (getChargeConfirm.res.face_price *
                                         (getChargeConfirm.res.sales_discount_rate / 100)) }} 원
                                 </h4>
-                                <h4 v-else class="font-weight-bold text-capitalize ls-0 align-left mt-5"
-                                    style="color:#FF0000">
+                                <h4 v-else-if="getChargeConfirm.res.charge_type == 'SMARTEL'"
+                                    class="font-weight-bold text-capitalize ls-0 align-left mt-5" style="color:#FF0000">
                                     {{ getChargeConfirm.res.rate_amt - (getChargeConfirm.res.rate_amt *
                                         (getChargeConfirm.res.sales_discount_rate / 100)) }} 0원
                                 </h4>
+                                <h4 v-else class="font-weight-bold text-capitalize ls-0 align-left mt-5"
+                                    style="color:#FF0000">
+                                    0원
+                                </h4>
+                            </v-col> -->
+                            <!-- 수정-->
+
+                            <v-col cols="9" v-if="getChargeConfirm.res.charge_type == 'SMARTEL'">
+                                <h4 v-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.rate_amt - (getChargeConfirm.res.rate_amt * (getChargeConfirm.res.sales_discount_rate / 100))) < 0"
+                                    class="font-weight-bold text-capitalize ls-0 align-left mt-5" style="color:#FF0000">
+                                    예치금이 부족합니다
+                                </h4>
+                                <h4 v-else class="font-weight-bold text-capitalize ls-0 align-left mt-5"
+                                    style="color:#FF0000">
+                                    {{ result }} 원
+                                </h4>
                             </v-col>
+                            <v-col cols="9" v-else>
+                                <h4 v-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.face_price - (getChargeConfirm.res.face_price * (getChargeConfirm.res.sales_discount_rate / 100))) < 0"
+                                    class="font-weight-bold text-capitalize ls-0 align-left mt-5" style="color:#FF0000">
+                                    예치금이 부족합니다
+                                </h4>
+                                <h4 v-else class="font-weight-bold text-capitalize ls-0 align-left mt-5"
+                                    style="color:#FF0000">
+                                    {{ result }} 원
+                                </h4>
+                            </v-col>
+
                         </v-row>
                         <!-- <v-row style="margin-top: 35px;">
                             <h4 class="font-weight-bold text-capitalize ls-0 align-start d-flex ml-6 pt-1 mt-5"
@@ -172,7 +197,7 @@
                         </v-row> -->
                         <v-btn @click="chargeConfirm()" elevation="0" :ripple="false" height="43"
                             class="text-white font-weight-bold py-2 px-6 me-2 mt-10 mb-0 w-50" color="#5e72e4"
-                            style="background-color: #ea5a9f;">충전
+                            style="background-color: #ea5a9f;" :disabled="chargeDisabled">충전
                         </v-btn>
                     </div>
                 </v-card>
@@ -189,6 +214,15 @@ export default {
     watch: {
     },
     computed: {
+        chargeDisabled() {
+            // 하나는 맞을수가 있어서 스마텔, 파워텔 분리 개산해야함
+            if (this.getChargeConfirm.res.success == "SUCC" && ((this.GET_SESSION_INFO().userInfo.deposit_amount - (this.getChargeConfirm.res.face_price - (this.getChargeConfirm.res.face_price * (this.getChargeConfirm.res.sales_discount_rate / 100))) > 0) ||
+                (this.GET_SESSION_INFO().userInfo.deposit_amount - (this.getChargeConfirm.res.rate_amt - (this.getChargeConfirm.res.rate_amt * (this.getChargeConfirm.res.sales_discount_rate / 100))) > 0))) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     },
     mounted() {
     },
@@ -207,6 +241,7 @@ export default {
                     agency_code: "",
                     phoneNo: ""
                 },
+                amount: 0,
                 res: {
                     success: "",
                     error: "",
@@ -282,7 +317,17 @@ export default {
             // this.$axios.post(this.$BASE_URL + '/smatelchargesearch', this.smatelChargeSearch.req).then(res => {
             this.$axios.post(this.$BASE_URL + '/charge/search', this.getChargeConfirm.req).then(res => {
                 this.getChargeConfirm.res = res.data;
-                console.log(" 응답 :: ", this.getChargeConfirm.res);
+                if (this.getChargeConfirm.res.success != "SUCC") {
+                    alert(this.getChargeConfirm.res.error_code + " " + this.getChargeConfirm.res.desc);
+                } else {
+                    if (this.getChargeConfirm.res.charge_type == 'SMARTEL') {
+                        this.result = this.getChargeConfirm.res.rate_amt - (this.getChargeConfirm.res.rate_amt *
+                            (this.getChargeConfirm.res.sales_discount_rate / 100))
+                    } else {
+                        this.result = this.getChargeConfirm.res.face_price - (this.getChargeConfirm.res.face_price *
+                            (this.getChargeConfirm.res.sales_discount_rate / 100))
+                    }
+                }
             }).catch(err => {
                 this.GLOBALFNC.err.commonErr(err)
             })
@@ -315,9 +360,7 @@ export default {
             this.smatelFeeCharge.req.telco = this.getChargeConfirm.res.telco;
             this.smatelFeeCharge.req.order_no = "202303201500000";
             this.smatelFeeCharge.req.ctn = this.getChargeConfirm.res.phone_no;
-            //this.smatelFeeCharge.req.ctn = "36300";
-            // this.smatelFeeCharge.req.rcg_amt = this.getChargeConfirm.res.rate_amt;
-            this.smatelFeeCharge.req.rcg_amt = "10000";
+            this.smatelFeeCharge.req.rcg_amt = this.getChargeConfirm.res.rate_amt;
             this.smatelFeeCharge.req.discount_amt = this.getChargeConfirm.res.rate_amt * (this.getChargeConfirm.res.sales_discount_rate / 100);
             this.smatelFeeCharge.req.org_id = "pjsmoon";
             this.smatelFeeCharge.req.rate_nm = this.getChargeConfirm.res.rate_nm;
@@ -326,8 +369,6 @@ export default {
             this.smatelFeeCharge.req.card_type = this.getChargeConfirm.res.card_type;
             this.smatelFeeCharge.req.current_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount;
             this.smatelFeeCharge.req.result_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount - (this.smatelFeeCharge.req.rcg_amt - this.smatelFeeCharge.req.discount_amt);
-
-            console.log(" 요청 :: ", this.smatelFeeCharge.req);
 
             this.$axios.post(this.$BASE_URL + '/smatelfeecharge', this.smatelFeeCharge.req).then(res => {
                 this.smatelFeeCharge.res = res.data;
@@ -357,7 +398,6 @@ export default {
             this.powercallFeeCharge.req.rcg_type = "V";
             this.powercallFeeCharge.req.current_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount;
             this.powercallFeeCharge.req.result_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount - (this.getChargeConfirm.res.face_price - this.powercallFeeCharge.req.discount_amt);
-            console.log("asdfasdf", this.powercallFeeCharge);
             this.$axios.post(this.$BASE_URL + '/powercall/charge', this.powercallFeeCharge.req).then(res => {
                 this.powercallFeeCharge.res = res.data;
             }).catch(err => {

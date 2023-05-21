@@ -70,7 +70,7 @@ export default {
             this.req = { user_id: this.user_id, user_password: this.user_password }
             this.$axios.post(this.$BASE_URL + '/agencyuserlogin', this.req).then(res => {
                 this.loginInfo.userInfo = res.data;
-                if (res.data != null) {
+                if (res.data.status == "200") {
                     this.ACT_SESSION_INFO(this.loginInfo);
                     this.ACT_LOGIN_INFO(true);
                     var init_login = this.loginInfo.userInfo.init_login;
@@ -79,11 +79,44 @@ export default {
                     } else {
                         this.$router.push('/charge/charge');
                     }
+                } else if (res.data.status == "510") {
+                    this.$swal({
+                        title: "로그인 실패",
+                        // text: "하부 대리점명 : " + this.addItem.agency_name + "<br>하부 대리점 코드를 부여하시겠습니까?",
+                        icon: "warning",
+                        html: "사용자 정보가 없습니다. 관리자에게 문의해주세요. <br>기타 문의는 xx-xxx-xxxx로 문의주시기 바랍니다",
+
+                        confirmButtonText: "확인",
+                        customClass: {
+                            confirmButton: "btn bg-gradient-dark",
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            return;
+                        }
+                    });
+                } else if (res.data.status == "511") {
+                    this.$swal({
+                        title: "로그인 실패",
+                        // text: "하부 대리점명 : " + this.addItem.agency_name + "<br>하부 대리점 코드를 부여하시겠습니까?",
+                        icon: "warning",
+                        html: "아이디/비밀번호를 확인해주세요. <br>기타 문의는 xx-xxx-xxxx로 문의주시기 바랍니다",
+
+                        confirmButtonText: "확인",
+                        customClass: {
+                            confirmButton: "btn bg-gradient-dark",
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            return;
+                        }
+                    });
                 } else {
                     this.$swal({
                         title: "로그인 실패",
+                        // text: "하부 대리점명 : " + this.addItem.agency_name + "<br>하부 대리점 코드를 부여하시겠습니까?",
                         icon: "warning",
-                        html: "아이디/비밀번호를 확인해주세요. <br>기타 문의는 xx-xxx-xxxx로 문의주시기 바랍니다",
+                        html: "관리자에게 문의해주세요. <br>기타 문의는 xx-xxx-xxxx로 문의주시기 바랍니다",
 
                         confirmButtonText: "확인",
                         customClass: {
