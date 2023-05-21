@@ -6,7 +6,7 @@ import MediaComment from "MediaComment";
 import ContentFooter from "Footer";
 import WorldMap from "WorldMap/WorldMap";
 import HtmlEditor from "HtmlEditor";
-import Dropzone from "Dropzone";
+// import Dropzone from "Dropzone";
 
 export {
   Drawer,
@@ -17,5 +17,5 @@ export {
   WorldMap,
   AppBarAuth,
   HtmlEditor,
-  Dropzone,
+  // Dropzone,
 };
