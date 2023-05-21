@@ -1,0 +1,49 @@
+// Here we change the inside variables of Vuetify
+// The Soft UI Design variables are located in "src/assets/scss/soft-ui-dashboard"
+
+@import "variables/typography";
+@import "variables/icons";
+@import "variables/list-item";
+@import "variables/forms";
+@import "variables/buttons";
+@import "variables/card";
+@import "variables/light-theme";
+@import "variables/border-radius";
+@import "variables/alerts";
+@import "variables/timeline";
+@import "variables/switch";
+@import "variables/pagination";
+@import "variables/progress";
+@import "variables/sliders";
+@import "variables/stepper";
+
+@mixin pc {
+    @media (min-width: 601px) {
+        @content;
+    }
+}
+
+@mixin mobile {
+    @media (max-width: 600px) {
+        @content;
+    }
+}
+
+$spacer: 0;
+$body-font-family: 'Noto Sans KR', 'sans-serif';
+$font-size-root: 10px;
+$font-weight-bold: 500;
+$font-weight-bolder: 700;
+$line-height-md: 0;
+$icon-size: 20px;
+$toolbar-content-padding-y: 0;
+$toolbar-content-padding-x: 0;
+$breadcrumbs-margin: 0;
+$breadcrumbs-padding: 10px;
+$breadcrumbs-even-child-padding: 8px;
+$container-max-widths: (
+    'xl': 1280px
+);
+$input-icon-width: 20px;
+$input-icon-height: 20px;
+$input-slot-margin-bottom: 0;
