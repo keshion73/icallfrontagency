@@ -15,7 +15,7 @@
                         <div class="input-ph">
                             <v-text-field placeholder="휴대폰번호" outlined v-model="phoneNumber" ref="refPhoneNumber"
                                 :rules="[rules.inputPhoneNum.length, rules.inputPhoneNum.charValid]" />
-                            <v-btn flat color="primary" @click="search()">확인</v-btn>
+                            <v-btn flat color="primary" @click="search()" :disabled="searchDisabled">확인</v-btn>
                         </div>
                     </div>
                     <div>
@@ -36,7 +36,7 @@
                         </p>
                         <p v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'S'"
                             class="font-weight-bolder" style="color:#FF0000">
-                            타사제품 입니다.</p>
+                            타사 입니다.</p>
                         <p
                             v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'V'">
                             <span class="font-weight-bolder" style="color:#FF0000">타사제품 입니다.</span> <br>
@@ -119,7 +119,7 @@
                             <div class="input-ph">
                                 <v-text-field placeholder="휴대폰번호" outlined v-model="phoneNumber" ref="refPhoneNumber"
                                     :rules="[rules.inputPhoneNum.length, rules.inputPhoneNum.charValid]" />
-                                <v-btn flat color="primary" @click="search()">확인</v-btn>
+                                <v-btn flat color="primary" @click="search()" :disabled="searchDisabled">확인</v-btn>
                             </div>
                         </div>
                         <div>
@@ -133,7 +133,7 @@
                             </p>
                             <p v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'S'"
                                 class="font-weight-bolder" style="color:#FF0000">
-                                타사제품 입니다.</p>
+                                타사 입니다.</p>
                             <p
                                 v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'V'">
                                 <span class="font-weight-bolder" style="color:#FF0000">타사제품 입니다.</span> <br>
@@ -292,6 +292,13 @@ export default {
                 }
             } else {
                 return true;
+            }
+        },
+        searchDisabled() {
+            if ((this.phoneNumber == "" || this.phoneNumber == null) || this.$refs.refPhoneNumber.valid == false) {
+                return true
+            } else {
+                return false
             }
         }
     },
@@ -558,7 +565,7 @@ export default {
                 this.powercallFeeCharge.req.rate_nm = this.getChargeConfirm.res.card_name;
                 this.powercallFeeCharge.req.telco = this.getChargeConfirm.res.mvno_name;
                 // this.powercallFeeCharge.req.result_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount - (this.getChargeConfirm.res.face_price - this.powercallFeeCharge.req.discount_amt);
-                this.powercallFeeCharge.req.result_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount - this.amount;
+                // this.powercallFeeCharge.req.result_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount - this.amount;
             } else {
                 this.powercallFeeCharge.req.phone_no = this.phoneNumber;
                 this.powercallFeeCharge.req.rcg_amt = this.amount;
@@ -567,6 +574,8 @@ export default {
                 this.powercallFeeCharge.req.rate_nm = "";
                 this.powercallFeeCharge.req.telco = "";
             }
+
+            console.log("fe f", this.powercallFeeCharge.req)
             if (this.getChargeConfirm.res.vs_type == "V") {
                 this.$axios.post(this.$BASE_URL + '/powercall/vcharge', this.powercallFeeCharge.req).then(res => {
                     this.powercallFeeCharge.res = res.data;
@@ -581,7 +590,7 @@ export default {
                 this.$axios.post(this.$BASE_URL + '/powercall/scharge', this.powercallFeeCharge.req).then(res => {
                     this.powercallFeeCharge.res = res.data;
                     this.$swal.fire("성공", "충전 되었습니다.", "success");
-                    this.loginInfo.userInfo.deposit_amount = this.smatelFeeCharge.req.result_deposit;
+                    this.loginInfo.userInfo.deposit_amount = this.powercallFeeCharge.res.result_amount;
                     this.ACT_SESSION_INFO(this.loginInfo);
                     this.$router.push('/charge/history');
                 }).catch(err => {
