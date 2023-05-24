@@ -1,15 +1,15 @@
 <template>
-  <v-app-bar :height="60" :elevation="0" @mouseleave="drawer = false">
+  <v-app-bar :height="60">
     <div class="hd-wrap">
       <div class="hd-cont">
         <div class="logo">
           <img src="@/assets/images/icalllogo.svg" alt=""><span>대리점</span>
         </div>
-        <div class="gnb" @mouseenter="drawer = true" v-if="!$vuetify.breakpoint.xs">
-          <p>가입자 현황</p>
-          <p>충전</p>
-          <p>게시판</p>
-          <p>내정보</p>
+        <div class="gnb" v-if="!$vuetify.breakpoint.xs" @mouseenter="drawer = true">
+          <router-link to="#">가입자 현황</router-link>
+          <router-link to="/charge/charge">충전</router-link>
+          <router-link to="#">USIM</router-link>
+          <router-link to="#">내정보</router-link>
         </div>
         <div :class="[{ 'active': drawer }, 'all-menu']" @click="drawer = !drawer">
           <span></span>
@@ -18,22 +18,40 @@
         </div>
       </div>
     </div>
-    <v-navigation-drawer v-if="!$vuetify.breakpoint.xs" v-model="drawer" absolute width="100%" height="auto">
+    <v-navigation-drawer v-if="!$vuetify.breakpoint.xs" v-model="drawer" absolute width="100%" height="auto" temporary
+      hide-overlay>
       <div class="sub-menu">
         <v-list v-for="(submenu, index) in submenu" :key="'submenu' + index">
-          <v-list-item v-for="(item, index) in submenu.item" :key="'item' + index">
+          <!-- <v-list-item v-for="(item, index) in submenu.item" :key="'item' + index" link :to="item.menu_url"> -->
+          <v-list-item v-for="(item, index) in submenu.item" :key="'item' + index" link :to="item.to">
             {{ item.title }}
           </v-list-item>
         </v-list>
       </div>
     </v-navigation-drawer>
-    <v-navigation-drawer v-if="$vuetify.breakpoint.xs" v-model="drawer" absolute width="250px" height="100vh">
+    <v-navigation-drawer v-if="$vuetify.breakpoint.xs" v-model="drawer" absolute width="250px" height="100vh" hide-overlay
+      right>
+      <div class="mem-info">
+        <SubHeader></SubHeader>
+      </div>
       <div class="sub-menu">
-        <v-list v-for="(submenu, index) in submenu" :key="'submenu' + index">
-          <v-list-item v-for="(item, index) in submenu.item" :key="'item' + index">
-            {{ item.title }}
+        <v-list-group v-for="(item, i) in submenu" :key="i">
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title>
+                {{ item.title }}
+              </v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item v-for="(subItem, j) in item.item" :key="j" :to="subItem.to">
+            <v-list-item-content>
+              <v-list-item-title>
+                {{ subItem.title }}
+              </v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
-        </v-list>
+        </v-list-group>
       </div>
     </v-navigation-drawer>
   </v-app-bar>
@@ -42,20 +60,19 @@
 // import AppBarAuth from "@/components/AppBarAuth";
 // import AppBar from "@/components/AppBar.vue";
 // import Drawer from "@/components/Drawer.vue";
-
+import SubHeader from './SubHeader.vue';
 export default {
   components: {
     // AppBarAuth,
     // AppBar,
-    // Drawer
+    // Drawer,
+    SubHeader
   },
   mounted() { },
 
   data() {
     return {
       drawer: false,
-      allmenu: false,
-      togglerActive: false,
       submenu: [{
         title: '가입자 현황',
         item: [{
@@ -69,17 +86,19 @@ export default {
         ]
       },
       {
+        title: '충전',
         item: [{
           title: '충전',
-          to: '/',
+          to: '/charge/charge',
         },
         {
           title: '충전 내역 조회',
-          to: '/'
+          to: '/charge/history'
         }
         ]
       },
       {
+        title: 'USIM',
         item: [{
           title: 'USIM 요청',
           to: '/',
@@ -91,6 +110,7 @@ export default {
         ]
       },
       {
+        title: '내정보',
         item: [{
           title: '마이페이지',
           to: '/',
@@ -101,7 +121,7 @@ export default {
         },
         {
           title: '예치금 환불요청',
-          to: '/'
+          to: '/myinfo/depositrefund'
         },
         {
           title: '예치금 환불요청내역',
@@ -113,26 +133,9 @@ export default {
     }
   },
   methods: {
-    drawerClose() {
-      this.togglerActive = !this.togglerActive;
-      this.$emit("drawer-toggle", true);
-    },
-    minifyDrawer() {
-      this.togglerActive = !this.togglerActive;
-      this.mini = !this.mini;
-      const body = document.getElementsByTagName("body")[0];
 
-      if (body.classList.contains("drawer-mini")) {
-        body.classList.remove("drawer-mini");
-      } else {
-        body.classList.add("drawer-mini");
-      }
-    },
   },
   watch: {
-    toggleActive(val) {
-      this.togglerActive = val;
-    },
   },
 }
 </script>

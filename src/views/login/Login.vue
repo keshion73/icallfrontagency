@@ -1,22 +1,35 @@
 <template>
-    <v-card class="bg-transparent">
-        <div class="card-padding pb-0 pt-0" height="250">
-            <v-img src="@/assets/img/logos/icallmobile_logo.jpg" class="mb-2" contain />
+    <div class="login-cont">
+        <div class="d-flex">
+            <div class="loginimg" v-if="!$vuetify.breakpoint.xs">
+                <img src="@/assets/images/page/login/loginimg.png" alt="">
+            </div>
+            <div class="loginform">
+                <div class="d-flex">
+                    <p class="loginlogo"><img src="@/assets/images/icalllogo.svg" alt=""><span>대리점</span></p>
+                    <form action="">
+                        <v-text-field ref="refUserId" label="ID" placeholder="아이디" outlined v-model="user_id"
+                            :rules="[rules.inputUserId.required, rules.inputUserId.length, rules.inputUserId.charValid]"></v-text-field>
+                        <v-text-field ref="refUserPassword" label="Password" placeholder="비밀번호" outlined type="password"
+                            v-model="user_password"
+                            :rules="[rules.inputUserPassword.required, rules.inputUserPassword.length, rules.inputUserPassword.charValid]"></v-text-field>
+                        <v-btn :disabled="loginDisabled" elevation="0" :ripple="false" height="43"
+                            class="font-weight-bold text-uppercase btn-primary py-2 px-6 me-2 mt-7 mb-2 w-100"
+                            color="#ea5a9f" small @click="userLogin()">로그인</v-btn>
+                        <!-- <div class="input-chk">
+                            <input type="checkbox" id="login_save">
+                            <label for="login_save">아이디 저장</label>
+                        </div> -->
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="card-padding pb-4 pt-0">
-            <v-text-field ref="refUserId" label="ID" color="#e91e63" outlined dense class="font-size-input input-style py-0"
-                v-model="user_id" placeholder="아이디를 입력하세요."
-                :rules="[rules.inputUserId.required, rules.inputUserId.length, rules.inputUserId.charValid]"></v-text-field>
-            <v-text-field ref="refUserPassword" label="Password" color="#e91e63" outlined dense type="password"
-                placeholder="비밀번호를 입력하세요." class="font-size-input input-style py-0" v-model="user_password"
-                :rules="[rules.inputUserPassword.required, rules.inputUserPassword.length, rules.inputUserPassword.charValid]"></v-text-field>
-            <v-btn :disabled="loginDisabled" elevation="0" :ripple="false" height="43"
-                class="font-weight-bold text-uppercase btn-primary py-2 px-6 me-2 mt-7 mb-2 w-100" color="#ea5a9f" small
-                @click="userLogin()">로그인</v-btn>
+        <div class="login-ft" v-if="$vuetify.breakpoint.xs">
+            <p>㈜아이콜모바일(선유도지점) 사업자번호 : 226-23-91761 | 통신판매신고 : 2023-서울당산-605호 | 대표이사 : 박준성, 서울특별시 영등포구 양평동5가 양평로22길 21,
+                선유도코오롱디지털타워 605호</p>
         </div>
-    </v-card>
+    </div>
 </template>
-
 <script>
 import { mapActions } from 'vuex'
 
@@ -131,51 +144,10 @@ export default {
             }).catch(err => {
                 this.GLOBALFNC.err.commonErr(err)
             })
-        },
-        apiTest() {
-            var req = {
-                ORDER_NO: '20220625142345',
-                CTN: '01012345678',
-                RCG_AMT: '36300',
-                ORG_ID: 'SMP0884',
-                MSG_ID: 'RCG',
-                RCG_TYPE: 'V'
-            }
-            this.$axios.post(this.$BASE_URL + '/testApi', req).then(res => {
-                this.res.data = res;
-            }).catch(err => {
-                this.GLOBALFNC.err.commonErr(err)
-            })
         }
     }
 }
 </script>
-<!-- <template>
-    <div class="login-cont">
-        <div class="d-flex">
-            <div class="loginimg" v-if="!$vuetify.breakpoint.xs">
-                <img src="@/assets/images/page/login/loginimg.png" alt="">
-            </div>
-            <div class="loginform">
-                <div class="d-flex">
-                    <p class="loginlogo"><img src="@/assets/images/icalllogo.svg" alt=""><span>대리점</span></p>
-                    <form action="">
-                        <input type="text" placeholder="아이디" class="error">
-                        <span class="error-mes">유효하지 않습니다.</span>
-                        <input type="password" placeholder="비밀번호">
-                        <span class="error-mes"></span>
-                        <button type="submit" class="btn btn-blue">로그인</button>
-                        <div class="input-chk">
-                            <input type="checkbox" id="login">
-                            <label for="login">아이디 저장</label>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="login-ft" v-if="$vuetify.breakpoint.xs">
-            <p>㈜아이콜모바일(선유도지점) 사업자번호 : 226-23-91761 | 통신판매신고 : 2023-서울당산-605호 | 대표이사 : 박준성, 서울특별시 영등포구 양평동5가 양평로22길 21,
-                선유도코오롱디지털타워 605호</p>
-        </div>
-    </div>
-</template> -->
+<style lang="scss" scoped>
+@import '~@/assets/scss/page/login/login.scss';
+</style>

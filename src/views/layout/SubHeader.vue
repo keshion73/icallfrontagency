@@ -13,7 +13,8 @@
             <div class="sub-hd-info d-flex">
                 <div class="d-flex">
                     <p class="mark">잔액</p>
-                    <p><span class="font-weight-bolder">{{ GET_SESSION_INFO().userInfo.deposit_amount }} </span>원</p>
+                    <p><span class="font-weight-bolder">{{
+                        GLOBALFNC.expression.commonAmount(GET_SESSION_INFO().userInfo.deposit_amount) }} </span>원</p>
                 </div>
                 <div class="d-flex">
                     <p class="mark">전용계좌</p>
@@ -29,12 +30,15 @@
                 </div>
                 <div class="d-flex">
                     <p class="mark">담당자</p>
-                    <p class="font-weight-bold">박준성</p>
+                    <p class="font-weight-bold"> {{ GET_SESSION_INFO().userInfo.manager_name }}</p>
                 </div>
                 <div class="d-flex">
-                    <img src="@/assets/images/common/icon-people.svg" alt="">
-                    <p class="font-weight-bold">{{ GET_SESSION_INFO().userInfo.user_name }}</p>
-                    <button>로그아웃</button>
+                    <div>
+                        <img src="@/assets/images/common/icon-people.svg" alt="">
+                        <p class="font-weight-bold" style="display: inline-block;">{{ GET_SESSION_INFO().userInfo.user_name
+                        }}</p>
+                    </div>
+                    <button @click="logoutConfirm">로그아웃</button>
                 </div>
             </div>
         </div>
@@ -50,16 +54,45 @@ export default {
     },
     mounted() {
     },
-
+    watch: {
+    },
     data() {
         return {
         }
     },
     methods: {
-        ...mapActions('sessionStore', ["ACT_SESSION_INFO"]),
+        ...mapActions('sessionStore', ["ACT_SESSION_INFO", "ACT_LOGIN_INFO"]),
         ...mapGetters('sessionStore', ['GET_SESSION_INFO']),
-    },
-    watch: {
+        logoutConfirm() {
+            this.$swal({
+                // title: "?",
+                text: "로그아웃 하시겠습니까?",
+                // icon: "warning",
+                showCancelButton: true,
+                cancelButtonText: "취소",
+                confirmButtonText: "로그아웃",
+                customClass: {
+                    confirmButton: "btn bg-gradient-success",
+                    cancelButton: "btn bg-gradient-danger",
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.logout();
+                    //this.$swal.fire("성공", "그룹코드가 등록되었습니다.", "success");
+                }
+            });
+
+        },
+        logout() {
+            this.$axios.post(this.$BASE_URL + '/userlogout').then(res => {
+                window.localStorage.clear();
+                this.ACT_SESSION_INFO({});
+                this.ACT_LOGIN_INFO(false);
+                this.$router.push('/login');
+            }).catch(err => {
+                this.GLOBALFNC.err.commonErr(err)
+            })
+        }
     },
 }
 </script>
