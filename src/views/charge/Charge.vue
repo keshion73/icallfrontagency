@@ -565,7 +565,7 @@ export default {
                 this.powercallFeeCharge.req.discount_amt = Math.round(this.getChargeConfirm.res.face_price * (this.getChargeConfirm.res.sales_discount_rate / 100));
                 this.powercallFeeCharge.req.rate_nm = this.getChargeConfirm.res.card_name;
                 this.powercallFeeCharge.req.telco = this.getChargeConfirm.res.mvno_name;
-                // this.powercallFeeCharge.req.result_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount - (this.getChargeConfirm.res.face_price - this.powercallFeeCharge.req.discount_amt);
+                this.powercallFeeCharge.req.result_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount - (this.getChargeConfirm.res.face_price - this.powercallFeeCharge.req.discount_amt);
                 // this.powercallFeeCharge.req.result_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount - this.amount;
             } else {
                 this.powercallFeeCharge.req.phone_no = this.phoneNumber;

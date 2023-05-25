@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar :height="60">
+  <v-app-bar :height="60" @mouseleave="drawerout">
     <div class="hd-wrap">
       <div class="hd-cont">
         <div class="logo">
@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <v-navigation-drawer v-if="!$vuetify.breakpoint.xs" v-model="drawer" absolute width="100%" height="auto" temporary
+    <v-navigation-drawer v-if="!$vuetify.breakpoint.xs" v-model="drawer" absolute width="100%" height="auto">
       hide-overlay>
       <div class="sub-menu">
         <v-list v-for="(submenu, index) in submenu" :key="'submenu' + index">
@@ -35,7 +35,7 @@
         <SubHeader></SubHeader>
       </div>
       <div class="sub-menu">
-        <v-list-group v-for="(item, i) in submenu" :key="i">
+        <v-list-group v-for="(item, i) in submenu" :key="i" :ripple="false">
           <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title>
@@ -133,6 +133,11 @@ export default {
     }
   },
   methods: {
+    drawerout() {
+      if (!this.$vuetify.breakpoint.xs) {
+        this.drawer = false;
+      }
+    },
 
   },
   watch: {
