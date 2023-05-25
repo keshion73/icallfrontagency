@@ -559,6 +559,7 @@ export default {
             this.powercallFeeCharge.req.current_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount;
             this.powercallFeeCharge.req.rcg_type = this.getChargeConfirm.res.vs_type;
             this.loginInfo.userInfo = this.GET_SESSION_INFO().userInfo;
+
             if (this.getChargeConfirm.res.vs_type == "V") {
                 this.powercallFeeCharge.req.phone_no = this.getChargeConfirm.res.phone_no;
                 this.powercallFeeCharge.req.rcg_amt = this.getChargeConfirm.res.face_price;
@@ -581,7 +582,7 @@ export default {
                     this.powercallFeeCharge.res = res.data;
                     if (this.powercallFeeCharge.res.success == "SUCC") {
                         this.$swal.fire("성공", "충전 되었습니다.", "success");
-                        this.loginInfo.userInfo.deposit_amount = this.smatelFeeCharge.req.result_deposit;
+                        this.loginInfo.userInfo.deposit_amount = this.powercallFeeCharge.req.result_deposit;
                         this.ACT_SESSION_INFO(this.loginInfo);
                         this.$router.push('/charge/history');
                     } else {
