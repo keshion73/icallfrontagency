@@ -558,6 +558,7 @@ export default {
             this.powercallFeeCharge.req.card_type = this.getChargeConfirm.res.card_type;
             this.powercallFeeCharge.req.current_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount;
             this.powercallFeeCharge.req.rcg_type = this.getChargeConfirm.res.vs_type;
+            this.loginInfo.userInfo = this.GET_SESSION_INFO().userInfo;
             if (this.getChargeConfirm.res.vs_type == "V") {
                 this.powercallFeeCharge.req.phone_no = this.getChargeConfirm.res.phone_no;
                 this.powercallFeeCharge.req.rcg_amt = this.getChargeConfirm.res.face_price;
@@ -575,24 +576,31 @@ export default {
                 this.powercallFeeCharge.req.telco = "";
             }
 
-            console.log("fe f", this.powercallFeeCharge.req)
             if (this.getChargeConfirm.res.vs_type == "V") {
                 this.$axios.post(this.$BASE_URL + '/powercall/vcharge', this.powercallFeeCharge.req).then(res => {
                     this.powercallFeeCharge.res = res.data;
-                    this.$swal.fire("성공", "충전 되었습니다.", "success");
-                    this.loginInfo.userInfo.deposit_amount = this.smatelFeeCharge.req.result_deposit;
-                    this.ACT_SESSION_INFO(this.loginInfo);
-                    this.$router.push('/charge/history');
+                    if (this.powercallFeeCharge.res.success == "SUCC") {
+                        this.$swal.fire("성공", "충전 되었습니다.", "success");
+                        this.loginInfo.userInfo.deposit_amount = this.smatelFeeCharge.req.result_deposit;
+                        this.ACT_SESSION_INFO(this.loginInfo);
+                        this.$router.push('/charge/history');
+                    } else {
+                        this.$swal.fire("실패", "충전에 실패하였습니다. 관리자에게 문의하세요.", "error");
+                    }
                 }).catch(err => {
                     this.GLOBALFNC.err.commonErr(err)
                 })
             } else {
                 this.$axios.post(this.$BASE_URL + '/powercall/scharge', this.powercallFeeCharge.req).then(res => {
                     this.powercallFeeCharge.res = res.data;
-                    this.$swal.fire("성공", "충전 되었습니다.", "success");
-                    this.loginInfo.userInfo.deposit_amount = this.powercallFeeCharge.res.result_amount;
-                    this.ACT_SESSION_INFO(this.loginInfo);
-                    this.$router.push('/charge/history');
+                    if (this.powercallFeeCharge.res.success == "SUCC") {
+                        this.$swal.fire("성공", "충전 되었습니다.", "success");
+                        this.loginInfo.userInfo.deposit_amount = this.powercallFeeCharge.res.result_amount;
+                        this.ACT_SESSION_INFO(this.loginInfo);
+                        this.$router.push('/charge/history');
+                    } else {
+                        this.$swal.fire("실패", "충전에 실패하였습니다. 관리자에게 문의하세요.", "error");
+                    }
                 }).catch(err => {
                     this.GLOBALFNC.err.commonErr(err)
                 })
