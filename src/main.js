@@ -18,6 +18,21 @@ Vue.prototype.GLOBALVAL = GlobalValue
 Vue.prototype.GLOBALFNC = GlobalFunction
 Vue.config.productionTip = false;
 
+router.beforeEach((to, from, next) => {
+  //authenticationState는 유저가 로그인이 되어있는지 아닌지 값을 가져와 판별해준다.
+  let isLogin = store.getters['sessionStore/GET_ISLOGIN_INFO'];
+  if (to.name == 'Login') {
+    next();
+  } else {
+    if (!isLogin) {
+      // 로그인이 되어있지 않으면 로그인 페이지로 보낸다.
+      return next({ path: "/login" });
+    } else {
+      next();
+    }
+  }
+});
+
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 axios.defaults.headers.get['Access-Control-Allow-Origin'] = '*';
 

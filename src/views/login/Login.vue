@@ -13,13 +13,11 @@
                         <v-text-field ref="refUserPassword" label="Password" placeholder="비밀번호" outlined type="password"
                             v-model="user_password"
                             :rules="[rules.inputUserPassword.required, rules.inputUserPassword.length, rules.inputUserPassword.charValid]"></v-text-field>
-                        <v-btn :disabled="loginDisabled" elevation="0" :ripple="false" height="43"
-                            class="font-weight-bold text-uppercase btn-primary py-2 px-6 me-2 mt-7 mb-2 w-100"
-                            color="#ea5a9f" small @click="userLogin()">로그인</v-btn>
-                        <!-- <div class="input-chk">
-                            <input type="checkbox" id="login_save">
+                        <v-btn :disabled="loginDisabled" @click="userLogin()" flat color="primary" x-large block>로그인</v-btn>
+                        <div class="input-chk">
+                            <input type="checkbox" id="login_save" v-model="saveId">
                             <label for="login_save">아이디 저장</label>
-                        </div> -->
+                        </div>
                     </form>
                 </div>
             </div>
@@ -53,6 +51,18 @@ export default {
         },
     },
     mounted() {
+        window.addEventListener('keyup', this.keyPress);
+        this.user_id = this.getCookie("icallmobile");
+
+        if (this.user_id == "" || this.user_id == null) {
+            this.saveId = false;
+        } else {
+            this.saveId = true;
+        }
+
+    },
+    beforeDestroy() {
+        window.removeEventListener('keyup', this.keyPress);
     },
     data() {
         return {
@@ -63,6 +73,7 @@ export default {
             loginInfo: {
                 userInfo: {}
             },
+            saveId: false,
             rules: {
                 inputUserId: {
                     required: value => !!value || 'ID를 입력하세요.',
@@ -79,6 +90,16 @@ export default {
     },
     methods: {
         ...mapActions('sessionStore', ["ACT_SESSION_INFO", "ACT_LOGIN_INFO"]),
+        keyPress(event) {
+            const swalPopup = document.getElementsByClassName("swal2-confirm");
+            if (swalPopup.length == 0) {
+                if (event.keyCode === 13) {
+                    if (!this.loginDisabled) {
+                        this.userLogin();
+                    }
+                }
+            }
+        },
         userLogin() {
             this.req = { user_id: this.user_id, user_password: this.user_password }
             this.$axios.post(this.$BASE_URL + '/agencyuserlogin', this.req).then(res => {
@@ -87,6 +108,11 @@ export default {
                     this.ACT_SESSION_INFO(this.loginInfo);
                     this.ACT_LOGIN_INFO(true);
                     var init_login = this.loginInfo.userInfo.init_login;
+                    if (this.saveId) {
+                        this.setCookie("icallmobile", this.user_id, 31);
+                    } else {
+                        this.deleteCookie("icallmobile");
+                    }
                     if (init_login == true) {
                         this.$router.push('/init');
                     } else {
@@ -95,10 +121,8 @@ export default {
                 } else if (res.data.status == "510") {
                     this.$swal({
                         title: "로그인 실패",
-                        // text: "하부 대리점명 : " + this.addItem.agency_name + "<br>하부 대리점 코드를 부여하시겠습니까?",
                         icon: "warning",
-                        html: "사용자 정보가 없습니다. 관리자에게 문의해주세요. <br>기타 문의는 xx-xxx-xxxx로 문의주시기 바랍니다",
-
+                        html: "사용자 정보가 없습니다. 영업담당자에게 문의해주세요.",
                         confirmButtonText: "확인",
                         customClass: {
                             confirmButton: "btn bg-gradient-dark",
@@ -111,10 +135,8 @@ export default {
                 } else if (res.data.status == "511") {
                     this.$swal({
                         title: "로그인 실패",
-                        // text: "하부 대리점명 : " + this.addItem.agency_name + "<br>하부 대리점 코드를 부여하시겠습니까?",
                         icon: "warning",
-                        html: "아이디/비밀번호를 확인해주세요. <br>기타 문의는 xx-xxx-xxxx로 문의주시기 바랍니다",
-
+                        html: "아이디/비밀번호를 확인해주세요. <br>기타 문의는 영업담당자에게 문의주시기 바랍니다",
                         confirmButtonText: "확인",
                         customClass: {
                             confirmButton: "btn bg-gradient-dark",
@@ -127,10 +149,8 @@ export default {
                 } else {
                     this.$swal({
                         title: "로그인 실패",
-                        // text: "하부 대리점명 : " + this.addItem.agency_name + "<br>하부 대리점 코드를 부여하시겠습니까?",
                         icon: "warning",
-                        html: "관리자에게 문의해주세요. <br>기타 문의는 xx-xxx-xxxx로 문의주시기 바랍니다",
-
+                        html: "관리자에게 문의해주세요. <br>기타 문의는 영업담당자에게 문의주시기 바랍니다",
                         confirmButtonText: "확인",
                         customClass: {
                             confirmButton: "btn bg-gradient-dark",
@@ -144,6 +164,33 @@ export default {
             }).catch(err => {
                 this.GLOBALFNC.err.commonErr(err)
             })
+        },
+        setCookie(cookieName, value, exdays) {
+            var exdate = new Date();
+            exdate.setDate(exdate.getDate() + exdays);
+            var cookieValue = escape(value)
+                + ((exdays == null) ? "" : "; expires=" + exdate.toGMTString());
+            document.cookie = cookieName + "=" + cookieValue;
+        },
+        deleteCookie(cookieName) {
+            var expireDate = new Date();
+            expireDate.setDate(expireDate.getDate() - 1);
+            document.cookie = cookieName + "= " + "; expires="
+                + expireDate.toGMTString();
+        },
+        getCookie(cookieName) {
+            cookieName = cookieName + '=';
+            var cookieData = document.cookie;
+            var start = cookieData.indexOf(cookieName);
+            var cookieValue = '';
+            if (start != -1) { // 쿠키가 존재하면
+                start += cookieName.length;
+                var end = cookieData.indexOf(';', start);
+                if (end == -1) // 쿠키 값의 마지막 위치 인덱스 번호 설정 
+                    end = cookieData.length;
+                cookieValue = cookieData.substring(start, end);
+            }
+            return unescape(cookieValue);
         }
     }
 }

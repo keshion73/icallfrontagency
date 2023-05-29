@@ -19,7 +19,6 @@
       </div>
     </div>
     <v-navigation-drawer v-if="!$vuetify.breakpoint.xs" v-model="drawer" absolute width="100%" height="auto">
-      hide-overlay>
       <div class="sub-menu">
         <v-list v-for="(submenu, index) in submenu" :key="'submenu' + index">
           <!-- <v-list-item v-for="(item, index) in submenu.item" :key="'item' + index" link :to="item.menu_url"> -->

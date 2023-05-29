@@ -243,14 +243,12 @@ export default {
             this.searchData.start_date = new Date(now.setDate(now.getDate() - 1)).toISOString().substr(0, 10);
         },
         getChargeHistoryListAPI() {
-            console.log("?????");
             this.getChargeHistoryList.req.agency_code = this.GET_SESSION_INFO().userInfo.agency_code;
             this.getChargeHistoryList.req.start_date = this.searchData.start_date.replace(/-/gi, "");
             this.getChargeHistoryList.req.end_date = this.searchData.end_date.replace(/-/gi, "");
             this.getChargeHistoryList.req.phone_number = this.searchData.phone_number;
             this.getChargeHistoryList.req.charge_key = this.searchData.charge_key;
             this.$axios.post(this.$BASE_URL + '/charge/historylist', this.getChargeHistoryList.req).then(res => {
-                console.log("?????mm");
                 this.chargeHistoryList = res.data;
             }).catch(err => {
                 this.GLOBALFNC.err.commonErr(err)

@@ -209,7 +209,7 @@
                     </v-form>
                 </div>
             </div>
-            <div class="rt" v-if="!$vuetify.breakpoint.xs">
+            <!-- <div class="rt" v-if="!$vuetify.breakpoint.xs">
                 <div>
                     <h4 class="text-h4">종량제 수수료율</h4>
                     <v-data-table :headers="chargeRateInfoGroupListHeader" :items="chargeRateInfoSGroupList"
@@ -232,7 +232,7 @@
                         </template>
                     </v-data-table>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -303,8 +303,8 @@ export default {
         }
     },
     mounted() {
-        this.getChargeRateInfoVGroupListAPI("V");
-        this.getChargeRateInfoSGroupListAPI("S");
+        // this.getChargeRateInfoVGroupListAPI("V");
+        // this.getChargeRateInfoSGroupListAPI("S");
     },
     data() {
         return {
