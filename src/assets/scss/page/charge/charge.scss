@@ -1,17 +1,17 @@
 .charge-page {
   height: 100%;
+  background: #fff;
 
-  .container {
+  .charge-cont {
+    padding: 30px 0 0;
+    width: 100%;
     height: 100%;
     letter-spacing: -0.6px;
-  }
-
-  .lt {
-    background: #fff;
+    position: relative;
 
     h2 {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 40px;
     }
 
     h4 {
@@ -19,68 +19,176 @@
     }
 
     .v-form {
-      >button {
-        margin-top: 2.4rem;
+      >div:not(.charge-bg) {
+        width: 300px;
+        margin: 0 auto;
       }
 
-      >div {
-        &:first-child {
+      .charge-bg {
+
+        >div,
+        button {
+          width: 300px;
+          min-width: auto !important;
+          margin: 0 auto;
+        }
+
+        >div+div {
+          margin-top: 32px !important;
+        }
+
+        >div:first-of-type .d-flex {
+          align-items: center;
+
           p {
-            line-height: 1;
+            color: #00648A;
+            font-weight: 700;
+            display: inline-block;
           }
-        }
 
-        +div {
-          margin-top: 28px;
-        }
 
-        p.info-mes {
-          font-size: 1.4rem;
-          margin-top: 8px;
-          color: #666666;
-          font-weight: 400;
-
-        }
-
-        &:nth-of-type(5) {
-          p.font-weight-bolder {
-            font-size: 2rem;
-            color: #666666;
-            line-height: 1;
+          .mark {
+            border-radius: 10px;
+            display: inline-block;
+            width: 55px;
+            height: 22px;
+            line-height: 22px;
+            color: #00648A;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-right: 6px;
+            background: rgba(73, 167, 203, 0.2);
           }
-        }
-      }
 
-      .input-ph {
-        display: flex;
-        position: relative;
+          .mark-oth {
+            width: 77px;
+            background: rgba(229, 30, 120, 0.2);
+            color: #E51E78;
+            margin-left: 12px;
 
-        input {
-          padding-right: 80px;
+            img {
+              margin-right: 6px;
+              vertical-align: sub;
+            }
+          }
         }
 
         button {
-          height: 49px;
-          padding: 0 22px;
-          border-radius: 0 4px 4px 0;
-          position: absolute;
-          top: 1px;
-          right: 0
+          margin-top: 24px;
+        }
+      }
+
+    }
+  }
+
+  .charge-info {
+    background: #49A7CB;
+    border-radius: 10px;
+    margin-bottom: 32px;
+    padding: 12px 16px;
+    overflow: hidden;
+    color: #fff;
+
+    p {
+      float: right;
+
+      span {
+        vertical-align: baseline;
+
+        &:first-child {
+          font-weight: 700;
+          font-size: 3.2rem;
+          line-height: 46px;
+        }
+
+        &:last-child {
+          font-size: 1.4rem;
+          font-weight: 500 !important;
+          margin-left: 5px;
         }
       }
     }
   }
 
-  .rt {
-    display: flex;
-
-    h4 {
-      font-weight: 500;
-      margin-bottom: 8px;
+  .v-form {
+    >button {
+      margin-top: 24px;
     }
 
-    .v-data-table {
-      background: none;
+    >div {
+      &:first-child {
+        p {
+          line-height: 1;
+        }
+      }
+
+      +div {
+        margin-top: 32px !important;
+      }
+
+      p.info-mes {
+        font-size: 1.4rem;
+        margin-top: 8px;
+        color: #666666;
+        font-weight: 400;
+
+      }
+
+      &:nth-of-type(5) {
+        p.font-weight-bolder {
+          font-size: 2rem;
+          color: #666666;
+          line-height: 1;
+        }
+      }
+
+      p {
+        line-height: 1;
+      }
+    }
+
+    .input-ph {
+      display: flex;
+      position: relative;
+
+      input {
+        padding-right: 80px;
+      }
+
+      button {
+        height: 49px;
+        padding: 0 22px;
+        border-radius: 0 4px 4px 0;
+        position: absolute;
+        top: 1px;
+        right: 0;
+      }
+    }
+  }
+
+  .btn-sales {
+    cursor: pointer;
+    position: fixed;
+    bottom: 10px;
+    right: 0;
+  }
+
+  .charge-noti {
+    width: 300px;
+    padding: 18px 30px 30px;
+    background: #FFFFFF;
+    border: 1px solid rgba(73, 167, 203, 0.5);
+    border-radius: 8px;
+
+    h4 {
+      color: #49A7CB;
+      font-size: 1.5rem !important;
+      margin-bottom: 30px;
+    }
+
+    p {
+      line-height: 24px !important;
     }
   }
 }
@@ -160,7 +268,7 @@
       margin-bottom: 8px;
     }
 
-    >div+div {
+    >div:last-of-type {
       margin-top: 24px;
     }
 
@@ -168,47 +276,69 @@
       margin-top: 20px;
     }
   }
-}
 
-@include pc {
-  .charge-page {
-    background-image: linear-gradient(to right, #fff 35%, #F6F8FA 35%);
+  .refund-info {
+    background: #49A7CB;
+    border-radius: 10px;
+    margin-bottom: 12px;
 
-    .container {
-      display: flex;
-    }
+    >div:first-child {
+      padding: 12px 16px;
+      overflow: hidden;
+      color: #fff;
 
-    .lt {
-      width: 35%;
-      padding: 30px 50px;
+      p {
+        float: right;
 
-      form {
-        width: 300px;
+        span {
+          vertical-align: baseline;
 
-        div {
+          &:first-child {
+            font-weight: 700;
+            font-size: 3.2rem;
+          }
 
-          &:nth-of-type(3) {
-            p {
-              font-size: 1.6rem;
-              font-weight: 500;
-            }
+          &:last-child {
+            font-size: 1.4rem;
+            font-weight: 500 !important;
+            margin-left: 5px;
           }
         }
       }
     }
 
-    .rt {
-      padding: 30px 0 30px 80px;
+    >div:last-child {
+      background: #C6E2ED;
+      padding: 12px 16px;
+      border-radius: 0 0 10px 10px;
+      font-size: 1.2rem;
 
-      >div+div {
-        margin-left: 90px;
-      }
+      h4 {
+        margin: 0 11px 0 0;
+        color: #49A7CB;
+        font-size: 1.2rem !important;
+        font-weight: 500 !important;
 
-      .v-data-table {
-        width: 300px;
-        overflow: hidden;
       }
     }
+
+  }
+
+  .refund-req {
+    font-size: 1.2rem;
+    color: #666;
+    line-height: 1;
+    margin-bottom: 20px;
+
+    img {
+      margin-right: 6px;
+      vertical-align: top;
+    }
+  }
+}
+
+@include pc {
+  .charge-page {
 
     .chargehis-input {
       .container {
@@ -219,13 +349,31 @@
         }
       }
     }
-  }
 
-  .v-data-table {
-    min-height: 700px;
+    .v-form {
+      height: calc(100% - 70px);
+      overflow: hidden;
+    }
 
-    table {
-      width: auto !important;
+    .charge-bg {
+      height: calc(100% - 200px);
+      padding: 40px 0 120px;
+      background: rgba(57, 159, 199, 0.05) url('~@/assets/images/page/charge/charge-bg.png') no-repeat bottom left;
+    }
+
+    .noti-cont {
+      position: absolute;
+      top: 50%;
+      height: 100%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      .charge-noti {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+      }
     }
   }
 
@@ -233,23 +381,18 @@
 
 @include mobile {
   .charge-page {
-    .lt {
-      padding: 40px;
+    .charge-bg {
+      background: rgba(57, 159, 199, 0.05);
+      padding: 40px 0;
 
-      form {
-        div {
-          font-size: 1.6rem;
-          font-weight: 500;
-        }
+      button {
+        margin-bottom: 40px !important;
       }
-    }
 
-    .rt {
-      padding: 40px;
-      flex-direction: column;
-
-      >div+div {
-        margin-top: 20px;
+      >div:first-of-type .d-flex {
+        p {
+          color: #49A7CB !important;
+        }
       }
     }
   }
@@ -293,6 +436,14 @@
       min-height: 300px;
     }
   }
+
+  .refund-page {
+    .container {
+      >div:last-of-type {
+        margin-top: 20px;
+      }
+    }
+  }
 }
 
 ::v-deep {
@@ -321,18 +472,19 @@
         width: calc(33.33% - 8px);
         height: 48px !important;
         line-height: 46px;
-        border: 1px solid #C7D1E3;
         border-radius: 8px;
         text-align: center;
         font-size: 1.6rem;
         cursor: pointer;
         font-weight: 400;
+        background: #FFFFFF;
+        border: 1px solid #C7D1E3;
       }
 
       &.v-item--active {
         .v-label {
-          border: 1px solid #49A7CB;
-          background: #49A7CB;
+          border: 1px solid #00648A;
+          background: #00648A;
           color: #fff;
           font-weight: 700;
         }

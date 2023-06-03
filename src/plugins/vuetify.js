@@ -8,6 +8,7 @@ const vuetify = new Vuetify({
     themes: {
       light: {
         primary: '#49A7CB',
+        btncolor: '#00648A'
       },
     },
   },

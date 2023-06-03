@@ -5,6 +5,7 @@ import router from "./router";
 import store from "./store/index";
 import axios from 'axios'
 import BASE_URL from './config.js';
+import api from './util/api';
 import DashboardPlugin from "./plugins/dashboard-plugin";
 import GlobalValue from './global/GlobalVariable'
 import GlobalFunction from './global/GlobalFunction'
@@ -45,6 +46,7 @@ new Vue({
   vuetify,
   router,
   store,
+  //api,
   render: (h) => h(App),
 }).$mount("#app");
 

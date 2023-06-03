@@ -1,23 +1,52 @@
 <template>
-    <div class="charge-page d-flex">
-        <div class="container">
-            <div class="lt">
-                <h2 class="text-h2">{{ $route.name }}</h2>
-                <v-form v-if="!$vuetify.breakpoint.xs">
-                    <div>
+    <div class="charge-page">
+        <LoadingComponents :loading="loading" :msg="msg">
+        </LoadingComponents>
+        <ModalComponents :icon="iconName" :title="modalTitle" v-if="upModal">
+            <p slot="mes" v-html="msgHtml"></p>
+            <div slot="btn">
+                <v-btn color="btncolor" x-large @click.prevent="modalConfirm">확인</v-btn>
+            </div>
+        </ModalComponents>
+        <div class="charge-cont">
+            <div class="container noti-cont" v-if="!$vuetify.breakpoint.xs">
+                <div class="charge-noti">
+                    <h4 class="text-h4">충전시 유의사항</h4>
+                    <p>
+                        타사 충전 문의 : 02.811.3729<br>운영시간 : 오전 10시 - 오후 9시<br><br>
+                        전용계좌 2만원부터 입금가능<br>(입금시 1분 소요, 재 로그인 필수)<br>
+                        회사에따라 충전 시간이 다를 수 있습니다.<br><br>
+                        모빙 정액요금제 충전 불가<br>
+                        일반요금제 충전 취소 불가<br><br>
+                        충전 취소는 상황에따라 불가 할 수 있으며, <br>
+                        취소 시 시간이 다소 걸릴수 있습니다.
+                    </p>
+                </div>
+            </div>
+            <h2 class="text-h2">{{ $route.name }}</h2>
+            <v-form v-if="!$vuetify.breakpoint.xs">
+                <div class="charge-info">
+                    <h4 class="text-h4">예치금 잔액</h4>
+                    <p><span>{{
+                        GLOBALFNC.expression.commonAmount(GET_SESSION_INFO().userInfo.deposit_amount
+                        ) }}</span><span>원</span></p>
+                </div>
+                <!-- <div>
                         <h4 class="text-h4">예치금 잔액</h4>
                         <p class="font-weight-bolder primary--text text-h6">{{
                             GLOBALFNC.expression.commonAmount(GET_SESSION_INFO().userInfo.deposit_amount
                             ) }}원</p>
+                    </div> -->
+                <div>
+                    <h4 class="text-h4">폰번호</h4>
+                    <div class="input-ph">
+                        <v-text-field placeholder="휴대폰번호" outlined v-model="phoneNumber" ref="refPhoneNumber"
+                            :rules="[rules.inputPhoneNum.length, rules.inputPhoneNum.charValid]" />
+                        <v-btn color="primary" @click="search()" :disabled="searchDisabled">확인</v-btn>
+                        <!-- <v-btn flat color="primary" @click="search()" :disabled="searchDisabled">확인</v-btn> -->
                     </div>
-                    <div>
-                        <h4 class="text-h4">폰번호</h4>
-                        <div class="input-ph">
-                            <v-text-field placeholder="휴대폰번호" outlined v-model="phoneNumber" ref="refPhoneNumber"
-                                :rules="[rules.inputPhoneNum.length, rules.inputPhoneNum.charValid]" />
-                            <v-btn flat color="primary" @click="search()" :disabled="searchDisabled">확인</v-btn>
-                        </div>
-                    </div>
+                </div>
+                <div class="charge-bg">
                     <div>
                         <h4 class="text-h4">고객정보</h4>
                         <!-- <p v-if="getChargeConfirm.res.telco != '' && getChargeConfirm.res.telco != null &&
@@ -28,22 +57,34 @@
                             {{ getChargeConfirm.res.card_name }} {{ getChargeConfirm.res.data }}</p>
                         <p v-else style="color:#AAB5C9" class="info-mes">폰 번호 입력
                             후, 확인버튼을 눌러주세요.</p> -->
-                        <p v-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'V'">
-                            {{ getChargeConfirm.res.telco }} {{ getChargeConfirm.res.rate_nm }}
-                        </p>
-                        <p v-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'S'">
-                            {{ getChargeConfirm.res.telco }} {{ getChargeConfirm.res.rate_nm }}
-                        </p>
-                        <p v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'S'"
-                            class="font-weight-bolder" style="color:#FF0000">
-                            타사 입니다.</p>
-                        <p
-                            v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'V'">
-                            <span class="font-weight-bolder" style="color:#FF0000">타사제품 입니다.</span> <br>
-                            {{ getChargeConfirm.res.card_name }} {{ getChargeConfirm.res.data }}
-                        </p>
-                        <p v-else style="color:#AAB5C9" class="info-mes">폰 번호 입력
-                            후, 확인버튼을 눌러주세요.</p>
+                        <div class="d-flex">
+                            <!-- <span v-if="getChargeConfirm.res.charge_type == 'SMARTEL'"
+                                class="mark">스마텔</span> -->
+                            <p v-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'V'">
+                                <span class="mark">스마텔</span>
+                                {{ getChargeConfirm.res.telco }} {{ getChargeConfirm.res.rate_nm }}
+                            </p>
+                            <p
+                                v-else-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'S'">
+                                <span class="mark">스마텔</span>
+                                {{ getChargeConfirm.res.telco }} {{ getChargeConfirm.res.rate_nm }}
+                            </p>
+                            <p
+                                v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'S'">
+                                <span class="mark mark-oth"><img src="@/assets/images/common/icon-infored.svg" alt="">타사
+                                    상품</span>
+                            </p>
+                            <p
+                                v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'V'">
+                                {{ getChargeConfirm.res.card_name }} {{ getChargeConfirm.res.data }}
+                                <span class="mark mark-oth"><img src="@/assets/images/common/icon-infored.svg" alt="">타사
+                                    상품</span>
+                            </p>
+                            <p v-else style="color:#AAB5C9" class="info-mes">폰 번호 입력
+                                후, 확인버튼을 눌러주세요.</p>
+                            <!-- <span v-if="getChargeConfirm.res.charge_type == 'POWERCALL'" class="mark mark-oth"><img
+                                    src="@/assets/images/common/icon-infored.svg" alt="">타사 상품</span> -->
+                        </div>
                     </div>
                     <div>
                         <h4 class="text-h4">충전금액</h4>
@@ -75,72 +116,91 @@
                         <h4 class="text-h4">예치금 차감액</h4>
                         <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.rate_amt - (getChargeConfirm.res.rate_amt * (getChargeConfirm.res.sales_discount_rate / 100))) < 0"
                             class="font-weight-bolder" style="color:#FF0000">예치금이 부족합니다.</p>
-                        <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
+                        <p v-else class="font-weight-bolder" style="font-size: 2rem;color:#666">{{
+                            GLOBALFNC.expression.commonAmount(amount) }} 원</p>
                     </div>
                     <div v-else-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'S'">
                         <h4 class="text-h4">예치금 차감액</h4>
                         <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - (selectedAmount - (selectedAmount * (getChargeConfirm.res.sales_discount_rate / 100))) < 0"
                             class="font-weight-bolder" style="color:#FF0000">예치금이 부족합니다.</p>
-                        <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
+                        <p v-else class="font-weight-bolder" style="font-size: 2rem;color:#666">{{
+                            GLOBALFNC.expression.commonAmount(amount) }} 원</p>
                     </div>
                     <div v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'V'">
                         <h4 class="text-h4">예치금 차감액</h4>
                         <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.rate_amt - (getChargeConfirm.res.rate_amt * (getChargeConfirm.res.sales_discount_rate / 100))) < 0"
                             class="font-weight-bolder" style="color:#FF0000">예치금이 부족합니다.</p>
-                        <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
+                        <p v-else class="font-weight-bolder" style="font-size: 2rem;color:#666">{{
+                            GLOBALFNC.expression.commonAmount(amount) }} 원</p>
                     </div>
                     <div v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'S'">
                         <h4 class="text-h4">예치금 차감액</h4>
                         <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - selectedAmount < 0" class="font-weight-bolder"
                             style="color:#FF0000">예치금이 부족합니다.</p>
-                        <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
+                        <p v-else class="font-weight-bolder" style="font-size: 2rem;color:#666">{{
+                            GLOBALFNC.expression.commonAmount(amount) }} 원</p>
                     </div>
                     <div v-else>
                         <h4 class="text-h4">예치금 차감액</h4>
                         <p class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
                     </div>
-                    <v-btn @click="chargeConfirm()" flat color="primary" x-large block :disabled="chargeDisabled">충전</v-btn>
-                </v-form>
-                <div v-if="$vuetify.breakpoint.xs">
-                    <v-form action="">
-                        <div>
-                            <h4 class="text-h4">예치금 잔액</h4>
-                            <p class="font-weight-bolder primary--text text-h6">{{
-                                GLOBALFNC.expression.commonAmount(GET_SESSION_INFO().userInfo.deposit_amount
-                                ) }}원</p>
-                        </div>
-                        <div>
-                            <!-- <h4 class="text-h4">폰번호</h4>
+                    <v-btn @click="chargeConfirm()" color="btncolor" x-large block :disabled="chargeDisabled">충전</v-btn>
+                    <!-- <v-btn @click="chargeConfirm()" flat color="primary" x-large block
+                            :disabled="chargeDisabled">충전</v-btn> -->
+                </div>
+            </v-form>
+            <div v-if="$vuetify.breakpoint.xs">
+                <v-form action="">
+                    <div class="charge-info">
+                        <h4 class="text-h4">예치금 잔액</h4>
+                        <p><span>{{
+                            GLOBALFNC.expression.commonAmount(GET_SESSION_INFO().userInfo.deposit_amount
+                            ) }}</span><span>원</span></p>
+                    </div>
+                    <div>
+                        <!-- <h4 class="text-h4">폰번호</h4>
                             <div class="input-ph">
                                 <v-text-field placeholder="휴대폰번호" outlined hide-details="auto"></v-text-field>
                                 <v-btn flat color="primary">확인</v-btn>
                             </div> -->
-                            <h4 class="text-h4">폰번호</h4>
-                            <div class="input-ph">
-                                <v-text-field placeholder="휴대폰번호" outlined v-model="phoneNumber" ref="refPhoneNumber"
-                                    :rules="[rules.inputPhoneNum.length, rules.inputPhoneNum.charValid]" />
-                                <v-btn flat color="primary" @click="search()" :disabled="searchDisabled">확인</v-btn>
-                            </div>
+                        <h4 class="text-h4">폰번호</h4>
+                        <div class="input-ph">
+                            <v-text-field placeholder="휴대폰번호" outlined v-model="phoneNumber" ref="refPhoneNumber"
+                                :rules="[rules.inputPhoneNum.length, rules.inputPhoneNum.charValid]" />
+                            <v-btn color="primary" @click="search()" :disabled="searchDisabled">확인</v-btn>
+                            <!-- <v-btn flat color="primary" @click="search()" :disabled="searchDisabled">확인</v-btn> -->
                         </div>
+                    </div>
+                    <div class="charge-bg">
                         <div>
                             <h4 class="text-h4">고객정보</h4>
-                            <!--입력전-->
-                            <p v-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'V'">
-                                {{ getChargeConfirm.res.telco }} {{ getChargeConfirm.res.rate_nm }}
-                            </p>
-                            <p v-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'S'">
-                                {{ getChargeConfirm.res.telco }} {{ getChargeConfirm.res.rate_nm }}
-                            </p>
-                            <p v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'S'"
-                                class="font-weight-bolder" style="color:#FF0000">
-                                타사 입니다.</p>
-                            <p
-                                v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'V'">
-                                <span class="font-weight-bolder" style="color:#FF0000">타사제품 입니다.</span> <br>
-                                {{ getChargeConfirm.res.card_name }} {{ getChargeConfirm.res.data }}
-                            </p>
-                            <p v-else style="color:#AAB5C9" class="info-mes">폰 번호 입력
-                                후, 확인버튼을 눌러주세요.</p>
+                            <div class="d-flex">
+                                <!--입력전-->
+                                <p
+                                    v-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'V'">
+                                    <span class="mark">스마텔</span>
+                                    {{ getChargeConfirm.res.telco }} {{ getChargeConfirm.res.rate_nm }}
+                                </p>
+                                <p
+                                    v-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'S'">
+                                    <span class="mark">스마텔</span>
+                                    {{ getChargeConfirm.res.telco }} {{ getChargeConfirm.res.rate_nm }}
+                                </p>
+                                <p v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'S'"
+                                    class="font-weight-bolder" style="color:#FF0000">
+                                    <span class="mark mark-oth"><img src="@/assets/images/common/icon-infored.svg" alt="">타사
+                                        상품</span>
+                                </p>
+                                <p
+                                    v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'V'">
+                                    <span class="font-weight-bolder" style="color:#FF0000"><span class="mark mark-oth"><img
+                                                src="@/assets/images/common/icon-infored.svg" alt="">타사 상품</span></span>
+                                    <br>
+                                    {{ getChargeConfirm.res.card_name }} {{ getChargeConfirm.res.data }}
+                                </p>
+                                <p v-else style="color:#AAB5C9" class="info-mes">폰 번호 입력
+                                    후, 확인버튼을 눌러주세요.</p>
+                            </div>
                         </div>
                         <div>
                             <h4 class="text-h4">충전금액</h4>
@@ -170,46 +230,117 @@
 
                         </div>
                         <!--입력후-->
-                        <div>
-                            <div
-                                v-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'V'">
-                                <h4 class="text-h4">예치금 차감액</h4>
-                                <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.rate_amt - (getChargeConfirm.res.rate_amt * (getChargeConfirm.res.sales_discount_rate / 100))) < 0"
-                                    class="font-weight-bolder" style="color:#FF0000">예치금이 부족합니다.</p>
-                                <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
-                            </div>
-                            <div
-                                v-else-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'S'">
-                                <h4 class="text-h4">예치금 차감액</h4>
-                                <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - (selectedAmount - (selectedAmount * (getChargeConfirm.res.sales_discount_rate / 100))) < 0"
-                                    class="font-weight-bolder" style="color:#FF0000">예치금이 부족합니다.</p>
-                                <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
-                            </div>
-                            <div
-                                v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'V'">
-                                <h4 class="text-h4">예치금 차감액</h4>
-                                <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.rate_amt - (getChargeConfirm.res.rate_amt * (getChargeConfirm.res.sales_discount_rate / 100))) < 0"
-                                    class="font-weight-bolder" style="color:#FF0000">예치금이 부족합니다.</p>
-                                <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
-                            </div>
-                            <div
-                                v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'S'">
-                                <h4 class="text-h4">예치금 차감액</h4>
-                                <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - selectedAmount < 0"
-                                    class="font-weight-bolder" style="color:#FF0000">예치금이 부족합니다.</p>
-                                <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
-                            </div>
-                            <div v-else>
-                                <h4 class="text-h4">예치금 차감액</h4>
-                                <p class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
+                        <div v-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'V'">
+                            <h4 class="text-h4">예치금 차감액</h4>
+                            <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.rate_amt - (getChargeConfirm.res.rate_amt * (getChargeConfirm.res.sales_discount_rate / 100))) < 0"
+                                class="font-weight-bolder" style="color:#FF0000">예치금이 부족합니다.</p>
+                            <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
+                        </div>
+                        <div
+                            v-else-if="getChargeConfirm.res.charge_type == 'SMARTEL' && getChargeConfirm.res.vs_type == 'S'">
+                            <h4 class="text-h4">예치금 차감액</h4>
+                            <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - (selectedAmount - (selectedAmount * (getChargeConfirm.res.sales_discount_rate / 100))) < 0"
+                                class="font-weight-bolder" style="color:#FF0000">예치금이 부족합니다.</p>
+                            <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
+                        </div>
+                        <div
+                            v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'V'">
+                            <h4 class="text-h4">예치금 차감액</h4>
+                            <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - (getChargeConfirm.res.rate_amt - (getChargeConfirm.res.rate_amt * (getChargeConfirm.res.sales_discount_rate / 100))) < 0"
+                                class="font-weight-bolder" style="color:#FF0000">예치금이 부족합니다.</p>
+                            <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
+                        </div>
+                        <div
+                            v-else-if="getChargeConfirm.res.charge_type == 'POWERCALL' && getChargeConfirm.res.vs_type == 'S'">
+                            <h4 class="text-h4">예치금 차감액</h4>
+                            <p v-if="GET_SESSION_INFO().userInfo.deposit_amount - selectedAmount < 0"
+                                class="font-weight-bolder" style="color:#FF0000">예치금이 부족합니다.</p>
+                            <p v-else class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
+                        </div>
+                        <div v-else>
+                            <h4 class="text-h4">예치금 차감액</h4>
+                            <p class="font-weight-bolder">{{ GLOBALFNC.expression.commonAmount(amount) }} 원</p>
+                        </div>
+                        <v-btn @click="chargeConfirm()" color="btncolor" x-large block :disabled="chargeDisabled">충전</v-btn>
+                        <!-- <v-btn @click="chargeConfirm()" flat color="primary" x-large block
+                            :disabled="chargeDisabled">충전</v-btn> -->
+                        <div class="container noti-cont">
+                            <div class="charge-noti">
+                                <h4 class="text-h4">충전시 유의사항</h4>
+                                <p>
+                                    타사 충전 문의 : 02.811.3729<br>운영시간 : 오전 10시 - 오후 8시<br><br>
+                                    전용계좌 2만원부터 입금가능<br>(입금시 1분 소요, 재 로그인 필수)<br>
+                                    회사에따라 충전 시간이 다를 수 있습니다.<br><br>
+                                    모빙 정액요금제 충전 불가<br>
+                                    일반요금제 충전 취소 불가<br><br>
+                                    충전 취소는 상황에따라 불가 할 수 있으며, <br>
+                                    취소 시 시간이 다소 걸릴수 있습니다.
+                                </p>
                             </div>
                         </div>
-                        <v-btn @click="chargeConfirm()" flat color="primary" x-large block
-                            :disabled="chargeDisabled">충전</v-btn>
-                    </v-form>
-                </div>
+                    </div>
+                </v-form>
             </div>
-            <!-- <div class="rt" v-if="!$vuetify.breakpoint.xs">
+            <div @click="dialog = true" class="btn-sales">
+                <img src="@/assets/images/page/charge/btn-sales.png" alt="">
+            </div>
+            <v-dialog v-model="dialog" width="360px">
+                <v-card>
+                    <div class="d-flex">
+                        <h4 class="text-h2">수수료율</h4>
+                        <v-btn @click="dialog = false"><img src="@/assets/images/common/icon-x.svg" alt=""></v-btn>
+                    </div>
+                    <v-tabs v-model="tab" height="40px" hideSlider>
+                        <v-tab>정액제</v-tab>
+                        <v-tab>종량제</v-tab>
+                    </v-tabs>
+                    <v-window v-model="tab">
+                        <v-window-item :transition="false">
+                            <div>
+                                <v-data-table :headers="chargeRateInfoGroupListHeader" :items="chargeRateInfoSGroupList"
+                                    disable-pagination hide-default-footer no-data-text="데이터가 없습니다." mobile-breakpoint="0">
+                                    <template #[`item.sales_discount_rate`]="{ item }">
+                                        <span>
+                                            {{ item.sales_discount_rate }}%
+                                        </span>
+                                    </template>
+                                </v-data-table>
+                                <!-- <v-data-table :headers="headers" :items="arr1" hide-default-footer no-data-text="데이터가 없습니다."
+                  disable-pagination>
+                  <template #[`item.sales_discount_rate`]="{ item }">
+                    <span>
+                      {{ item.sales_discount_rate }}%
+                    </span>
+                  </template>
+                </v-data-table> -->
+                            </div>
+                        </v-window-item>
+                        <v-window-item :transition="false">
+                            <div>
+                                <!-- <v-data-table :headers="headers" :items="arr2" hide-default-footer no-data-text="데이터가 없습니다."
+                  disable-pagination>
+                  <template #[`item.sales_discount_rate`]="{ item }">
+                    <span>
+                      {{ item.sales_discount_rate }}%
+                    </span>
+                  </template>
+                </v-data-table> -->
+                                <v-data-table :headers="chargeRateInfoGroupListHeader" :items="chargeRateInfoVGroupList"
+                                    disable-pagination hide-default-footer no-data-text="데이터가 없습니다." mobile-breakpoint="0">
+                                    <template #[`item.sales_discount_rate`]="{ item }">
+                                        <span>
+                                            {{ item.sales_discount_rate }}%
+                                        </span>
+                                    </template>
+                                </v-data-table>
+                            </div>
+                        </v-window-item>
+                    </v-window>
+                </v-card>
+            </v-dialog>
+        </div>
+
+        <!-- <div class="rt" v-if="!$vuetify.breakpoint.xs">
                 <div>
                     <h4 class="text-h4">종량제 수수료율</h4>
                     <v-data-table :headers="chargeRateInfoGroupListHeader" :items="chargeRateInfoSGroupList"
@@ -233,15 +364,20 @@
                     </v-data-table>
                 </div>
             </div> -->
-        </div>
     </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import LoadingComponents from '@/components/LoadingComponents.vue'
+import ModalComponents from '../../components/ModalComponents.vue'
 
 export default {
     name: "charge",
+    components: {
+        LoadingComponents,
+        ModalComponents
+    },
     watch: {
     },
     computed: {
@@ -303,11 +439,18 @@ export default {
         }
     },
     mounted() {
-        // this.getChargeRateInfoVGroupListAPI("V");
-        // this.getChargeRateInfoSGroupListAPI("S");
+        this.getChargeRateInfoVGroupListAPI("V");
+        this.getChargeRateInfoSGroupListAPI("S");
     },
     data() {
         return {
+            tab: null,
+            dialog: false,
+            loading: false,
+            msg: "",
+            upModal: false,
+            iconName: "",
+            modalTitle: "",
             phoneNumber: "",
             expAgencyCodeArr: ["IC180000", "IC180001", "IC290000", "IC900035"],
             rules: {
@@ -459,14 +602,22 @@ export default {
 
         },
         search() {
+            this.loading = true;
+            this.msg = "가입자 조회중 입니다."
             this.getChargeConfirm.req.phoneNo = this.phoneNumber;
             this.getChargeConfirm.req.agency_code = this.GET_SESSION_INFO().userInfo.agency_code;
             // this.$axios.post(this.$BASE_URL + '/smatelchargesearch', this.smatelChargeSearch.req).then(res => {
             this.$axios.post(this.$BASE_URL + '/charge/search', this.getChargeConfirm.req).then(res => {
+                this.loading = false;
                 this.getChargeConfirm.res = res.data;
                 if (this.getChargeConfirm.res.success != "SUCC") {
-                    this.$swal.fire(this.getChargeConfirm.res.desc, "관리자에게 문의하세요." + this.getChargeConfirm.res.desc, "error");
+
+                    //this.$swal.fire(this.getChargeConfirm.res.desc, "관리자에게 문의하세요." + this.getChargeConfirm.res.desc, "error");
                     // alert(this.getChargeConfirm.res.error_code + " " + this.getChargeConfirm.res.desc);
+                    this.iconName = "icon03"
+                    this.modalTitle = "가입자 조회 실패"
+                    this.msgHtml = "관리자에게 문의하세요. <br>" + this.getChargeConfirm.res.desc;
+                    this.upModal = true;
                 } else {
                     if (this.getChargeConfirm.res.charge_type == 'SMARTEL') {
                         if (this.getChargeConfirm.res.vs_type == "V") {
@@ -475,8 +626,12 @@ export default {
                         } else {
                             this.selectedAmount = "10000";
                             this.amount = this.selectedAmount;
+                            this.iconName = "icon02"
+                            this.modalTitle = "스마텔 종량제"
+                            this.msgHtml = "현재 스마텔 종량요금제는 준비중입니다.";
+                            this.upModal = true;
 
-                            this.$swal("준비중", "현재 스마텔 종량요금제는 준비중입니다.", "error");
+                            //this.$swal("준비중", "현재 스마텔 종량요금제는 준비중입니다.", "error");
                         }
                     } else {
                         if (this.getChargeConfirm.res.vs_type == "V") {
@@ -489,10 +644,11 @@ export default {
                     }
                 }
             }).catch(err => {
+                this.loading = false;
                 this.GLOBALFNC.err.commonErr(err)
             })
         },
-        sAmountChange(value) {
+        sAmountChange() {
             this.amount = this.selectedAmount;
         },
         chargeConfirm() {
@@ -521,6 +677,8 @@ export default {
             });
         },
         feeCharge() {
+            this.loading = true;
+            this.msg = "충전 진행중 입니다."
             this.smatelFeeCharge.req.agency_code = this.GET_SESSION_INFO().userInfo.agency_code;
             this.smatelFeeCharge.req.charge_company_code = "SMARTEL";
             this.smatelFeeCharge.req.telco = this.getChargeConfirm.res.telco;
@@ -538,21 +696,35 @@ export default {
             this.smatelFeeCharge.req.result_deposit = this.GET_SESSION_INFO().userInfo.deposit_amount - this.amount;
 
             this.$axios.post(this.$BASE_URL + '/smatelfeecharge', this.smatelFeeCharge.req).then(res => {
+                this.loading = false;
                 this.smatelFeeCharge.res = res.data;
                 this.loginInfo.userInfo = this.GET_SESSION_INFO().userInfo;
                 if (this.smatelFeeCharge.res.rslt_cd == "0000") {
-                    this.$swal.fire("성공", "충전 되었습니다.", "success");
                     this.loginInfo.userInfo.deposit_amount = this.smatelFeeCharge.req.result_deposit;
                     this.ACT_SESSION_INFO(this.loginInfo);
-                    this.$router.push('/charge/history');
+                    this.iconName = "icon01"
+                    this.modalTitle = "성공"
+                    this.msgHtml = "충전 되었습니다.";
+                    this.upModal = true;
+                    // this.$swal.fire("성공", "충전 되었습니다.", "success");
+                    // this.loginInfo.userInfo.deposit_amount = this.smatelFeeCharge.req.result_deposit;
+                    // this.ACT_SESSION_INFO(this.loginInfo);
+                    // this.$router.push('/charge/history');
                 } else {
-                    this.$swal.fire("실패", "충전에 실패하였습니다. 관리자에게 문의하세요", "error");
+                    this.iconName = "icon03"
+                    this.modalTitle = "실패"
+                    this.msgHtml = "충전에 실패하였습니다.<br> 관리자에게 문의하세요.";
+                    this.upModal = true;
+                    //this.$swal.fire("실패", "충전에 실패하였습니다. 관리자에게 문의하세요", "error");
                 }
             }).catch(err => {
+                this.loading = false;
                 this.GLOBALFNC.err.commonErr(err)
             })
         },
         powercallCharge() {
+            this.loading = true;
+            this.msg = "타사 충전 진행중 입니다."
             this.powercallFeeCharge.req.agency_code = this.GET_SESSION_INFO().userInfo.agency_code;
             this.powercallFeeCharge.req.charge_company_code = "POWERCALL";
             this.powercallFeeCharge.req.card_type = this.getChargeConfirm.res.card_type;
@@ -579,30 +751,54 @@ export default {
 
             if (this.getChargeConfirm.res.vs_type == "V") {
                 this.$axios.post(this.$BASE_URL + '/powercall/vcharge', this.powercallFeeCharge.req).then(res => {
+                    this.loading = false;
                     this.powercallFeeCharge.res = res.data;
                     if (this.powercallFeeCharge.res.success == "SUCC") {
-                        this.$swal.fire("성공", "충전 되었습니다.", "success");
                         this.loginInfo.userInfo.deposit_amount = this.powercallFeeCharge.req.result_deposit;
                         this.ACT_SESSION_INFO(this.loginInfo);
-                        this.$router.push('/charge/history');
+                        this.iconName = "icon01"
+                        this.modalTitle = "성공"
+                        this.msgHtml = "충전 되었습니다.";
+                        this.upModal = true;
+                        // this.$swal.fire("성공", "충전 되었습니다.", "success");
+                        // this.loginInfo.userInfo.deposit_amount = this.powercallFeeCharge.req.result_deposit;
+                        // this.ACT_SESSION_INFO(this.loginInfo);
+                        // this.$router.push('/charge/history');
                     } else {
-                        this.$swal.fire("실패", "충전에 실패하였습니다. 관리자에게 문의하세요.", "error");
+                        this.iconName = "icon03"
+                        this.modalTitle = "실패"
+                        this.msgHtml = "충전에 실패하였습니다.<br> 관리자에게 문의하세요.";
+                        this.upModal = true;
+                        // this.$swal.fire("실패", "충전에 실패하였습니다. 관리자에게 문의하세요.", "error");
                     }
                 }).catch(err => {
+                    this.loading = false;
                     this.GLOBALFNC.err.commonErr(err)
                 })
             } else {
                 this.$axios.post(this.$BASE_URL + '/powercall/scharge', this.powercallFeeCharge.req).then(res => {
+                    this.loading = false;
                     this.powercallFeeCharge.res = res.data;
                     if (this.powercallFeeCharge.res.success == "SUCC") {
-                        this.$swal.fire("성공", "충전 되었습니다.", "success");
                         this.loginInfo.userInfo.deposit_amount = this.powercallFeeCharge.res.result_amount;
                         this.ACT_SESSION_INFO(this.loginInfo);
-                        this.$router.push('/charge/history');
+                        this.iconName = "icon01"
+                        this.modalTitle = "성공"
+                        this.msgHtml = "충전 되었습니다.";
+                        this.upModal = true;
+                        // this.$swal.fire("성공", "충전 되었습니다.", "success");
+                        // this.loginInfo.userInfo.deposit_amount = this.powercallFeeCharge.res.result_amount;
+                        // this.ACT_SESSION_INFO(this.loginInfo);
+                        // this.$router.push('/charge/history');
                     } else {
-                        this.$swal.fire("실패", "충전에 실패하였습니다. 관리자에게 문의하세요.", "error");
+                        this.iconName = "icon03"
+                        this.modalTitle = "실패"
+                        this.msgHtml = "충전에 실패하였습니다.<br> 관리자에게 문의하세요.";
+                        this.upModal = true;
+                        // this.$swal.fire("실패", "충전에 실패하였습니다. 관리자에게 문의하세요.", "error");
                     }
                 }).catch(err => {
+                    this.loading = false;
                     this.GLOBALFNC.err.commonErr(err)
                 })
             }
@@ -616,6 +812,14 @@ export default {
             // }).catch(err => {
             //     this.GLOBALFNC.err.commonErr(err)
             // })
+        },
+        modalConfirm() {
+            if (this.modalTitle == "성공") {
+                this.$router.push('/charge/history');
+                this.upModal = false;
+            } else {
+                this.upModal = false;
+            }
         }
     }
 };
@@ -625,10 +829,87 @@ export default {
 
 ::v-deep {
     .v-data-table {
+        height: 560px;
+        overflow: hidden auto;
+        scrollbar-width: thin;
+        scrollbar-color: #00648A #ffffff;
+
+        .v-data-table__wrapper {
+            width: 90%;
+            overflow: hidden;
+        }
 
         th,
         td {
+            height: 32px !important;
             padding: 0 26px !important;
+            font-size: 1.2rem !important;
+        }
+
+        &::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background: #00648A;
+        }
+
+        &::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+    }
+
+    .v-dialog {
+        overflow: hidden;
+        box-shadow: none;
+
+        .v-card {
+            border-radius: 12px;
+            padding: 16px 0 16px 30px;
+
+            >.d-flex {
+                justify-content: space-between;
+                padding-right: 30px;
+
+                .v-btn {
+                    background: none;
+                    padding: 0;
+                    min-width: auto
+                }
+            }
+
+            .v-tabs {
+                margin: 16px 0;
+            }
+
+            .v-tab {
+                font-size: 1.4rem;
+                border-radius: 100px;
+                width: 105px;
+
+                &--active {
+                    background: #00648A;
+                    color: #fff;
+
+                    &::before {
+                        display: none;
+                    }
+                }
+
+                &:not(.v-tab--active) {
+                    color: #000 !important
+                }
+
+                &::before {
+                    border-radius: 100px;
+                }
+            }
+
+            .v-window {
+                overflow: visible;
+            }
+
         }
     }
 }

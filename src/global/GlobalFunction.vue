@@ -14,8 +14,12 @@ const err = {
 }
 const expression = {
     commonAmount(amount) {
-        let result = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        return result;
+        if (amount == null || amount == "" || amount === undefined) {
+            return 0;
+        } else {
+            let result = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return result;
+        }
     }
 }
 export default

@@ -33,14 +33,13 @@ export default [
     {
         path: '/init',
         name: 'Init',
-        component: Init,
-        // component: () => import(LoginLayout),
-        // children: [
-        //     {
-        //         path: '/init',
-        //         name: 'Init',
-        //         component: Init
-        //     },
-        // ]
+        component: LoginLayout,
+        children: [
+            {
+                path: '/init',
+                name: 'Init',
+                component: Init
+            },
+        ]
     },
 ]

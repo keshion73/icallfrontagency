@@ -12,10 +12,21 @@
             </v-breadcrumbs>
             <div class="sub-hd-info d-flex">
                 <div class="d-flex">
+                    <div class="d-flex">
+                        <p class="mark">잔액</p>
+                        <p><span class="font-weight-bolder">{{
+                            GLOBALFNC.expression.commonAmount(GET_SESSION_INFO().userInfo.deposit_amount) }} </span>원
+                        </p>
+                        <!-- <button><img src="@/assets/images/common/icon-re.svg" alt=""
+                                style="margin-left: 4px;vertical-align: middle;"></button> -->
+                    </div>
+                    <button class="logout-btn" v-if="$vuetify.breakpoint.xs">로그아웃</button>
+                </div>
+                <!-- <div class="d-flex">
                     <p class="mark">잔액</p>
                     <p><span class="font-weight-bolder">{{
                         GLOBALFNC.expression.commonAmount(GET_SESSION_INFO().userInfo.deposit_amount) }} </span>원</p>
-                </div>
+                </div> -->
                 <div class="d-flex">
                     <p class="mark">전용계좌</p>
                     <p class="font-weight-bold">{{ GET_SESSION_INFO().userInfo.account_no }}</p>
@@ -30,16 +41,16 @@
                 </div>
                 <div class="d-flex">
                     <p class="mark">담당자</p>
-                    <p class="font-weight-bold"> {{ GET_SESSION_INFO().userInfo.manager_name }}</p>
+                    <p class="font-weight-bold"> {{ GET_SESSION_INFO().userInfo.manager_name }} {{
+                        GET_SESSION_INFO().userInfo.phone_number }}</p>
                 </div>
                 <div class="d-flex">
-                    <div>
-                        <img src="@/assets/images/common/icon-people.svg" alt="">
-                        <p class="font-weight-bold" style="display: inline-block;">{{ GET_SESSION_INFO().userInfo.user_name
-                        }}</p>
-                    </div>
-                    <button @click="logoutConfirm">로그아웃</button>
+                    <p class="mark">대리점</p>
+                    <p class="font-weight-bold">
+                        {{ GET_SESSION_INFO().userInfo.agency_code }} ( {{ GET_SESSION_INFO().userInfo.user_name }} )
+                    </p>
                 </div>
+                <button class="logout-btn" v-if="!$vuetify.breakpoint.xs" @click="logoutConfirm">로그아웃</button>
             </div>
         </div>
     </div>

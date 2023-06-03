@@ -70,6 +70,12 @@ input[type="number"]::-webkit-inner-spin-button {
       }
     }
   }
+
+  &.v-input--is-disabled {
+    fieldset {
+      background: #F8FAFC;
+    }
+  }
 }
 
 .v-input .error--text .v-messages__message,
@@ -164,9 +170,20 @@ input[type=checkbox] {
   font-size: 1.6rem !important;
   font-weight: 700;
 
+  &.btncolor {
+    background: #00648A !important;
+    color: #fff !important;
+    text-align: center;
+
+    &:hover {
+      background-color: #49A7CB !important;
+      border-color: #49A7CB !important;
+    }
+  }
+
   &.primary {
-    background: #399FC7 !important;
-    color: #fff;
+    background: #49A7CB !important;
+    color: #fff !important;
     text-align: center;
 
     &:hover {

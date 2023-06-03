@@ -34,23 +34,25 @@
         <SubHeader></SubHeader>
       </div>
       <div class="sub-menu">
-        <v-list-group v-for="(item, i) in submenu" :key="i" :ripple="false">
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ item.title }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </template>
+        <v-list>
+          <v-list-group v-for="(item, i) in submenu" :key="i" :ripple="false">
+            <template v-slot:activator>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ item.title }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </template>
 
-          <v-list-item v-for="(subItem, j) in item.item" :key="j" :to="subItem.to">
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ subItem.title }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
+            <v-list-item v-for="(subItem, j) in item.item" :key="j" :to="subItem.to">
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ subItem.title }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-group>
+        </v-list>
       </div>
     </v-navigation-drawer>
   </v-app-bar>
