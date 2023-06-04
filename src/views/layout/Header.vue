@@ -58,15 +58,9 @@
   </v-app-bar>
 </template>
 <script>
-// import AppBarAuth from "@/components/AppBarAuth";
-// import AppBar from "@/components/AppBar.vue";
-// import Drawer from "@/components/Drawer.vue";
 import SubHeader from './SubHeader.vue';
 export default {
   components: {
-    // AppBarAuth,
-    // AppBar,
-    // Drawer,
     SubHeader
   },
   mounted() { },
@@ -126,7 +120,7 @@ export default {
         },
         {
           title: '예치금 환불요청내역',
-          to: '/'
+          to: '/myinfo/depositrefundlist'
         }
         ]
       },

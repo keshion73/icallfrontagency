@@ -370,7 +370,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import LoadingComponents from '@/components/LoadingComponents.vue'
-import ModalComponents from '../../components/ModalComponents.vue'
+import ModalComponents from '@/components/ModalComponents.vue'
 
 export default {
     name: "charge",

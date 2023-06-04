@@ -50,7 +50,7 @@
                         {{ GET_SESSION_INFO().userInfo.agency_code }} ( {{ GET_SESSION_INFO().userInfo.user_name }} )
                     </p>
                 </div>
-                <button class="logout-btn" v-if="!$vuetify.breakpoint.xs" @click="logoutConfirm">로그아웃</button>
+                <button class="logout-btn" v-if="!$vuetify.breakpoint.xs" @click="logoutConfirm()">로그아웃</button>
             </div>
         </div>
     </div>

@@ -54,7 +54,7 @@
                     </v-text-field>
                 </div>
                 <div>
-                    <v-btn color="primary" @click="getChargeHistoryListAPI()">조회</v-btn>
+                    <v-btn color="btncolor" @click="getChargeHistoryListAPI()">조회</v-btn>
                 </div>
             </div>
         </div>
