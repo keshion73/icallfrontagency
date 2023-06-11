@@ -1,16 +1,42 @@
 <template>
-    <v-container fluid class="py-6 pt-0">
-        <v-row class="mb-1 mt-2">
-            <!-- 헤더명 -->
-            <v-col md="12" class="me-auto text-start">
-                <h5 class="text-h5 text-sm font-weight-bold ml-5">
-                    마이페이지
-                </h5>
-            </v-col>
-        </v-row>
-        <v-form ref="modForm" lazy-validation>
-            <v-card class="card-shadow border-radius-xl mt-6" id="basic">
-                <div class="px-6 pb-6 pt-6">
+    <div class="refund-page">
+        <ModalComponents :icon="iconName" :title="modalTitle" v-if="upModal" @close="upModal = false">
+            <p slot="mes" v-html="msgHtml"></p>
+            <div slot="btn" v-if="basicMd">
+                <v-btn x-large @click="upModal = false" class="btntxt">취소</v-btn>
+                <v-btn color="btncolor" x-large @click.prevent="updateUserInfoAPI">확인</v-btn>
+            </div>
+            <div slot="btn" v-else>
+                <v-btn color="btncolor" x-large @click.prevent="modalConfirm">확인</v-btn>
+            </div>
+        </ModalComponents>
+        <LoadingComponents :loading="loading" :msg="msg">
+        </LoadingComponents>
+        <div class="container">
+            <h2 class="text-h2">{{ $route.name }}</h2>
+            <div>
+                <h4 class="text-h4">대리점 코드</h4>
+                <v-text-field v-model="modItem.user_id" ref="refUserId" placeholder="" outlined
+                    class="font-size-input input-style pt-0 readonlyDisabled" disabled>
+                </v-text-field>
+            </div>
+            <div>
+                <h4 class="text-h4">이름</h4>
+                <v-text-field v-model="modItem.user_name" ref="refUserName" placeholder="" outlined
+                    class="font-size-input input-style pt-0 readonlyDisabled"
+                    :rules="[rules.userName.required, rules.userName.length, rules.userName.charValid]">
+                </v-text-field>
+            </div>
+            <div>
+                <h4 class="text-h4">이메일</h4>
+                <v-text-field v-model="modItem.user_email" ref="refUserEmail" placeholder="" outlined
+                    class="font-size-input input-style pt-0 readonlyDisabled"
+                    :rules="[rules.userEmail.required, rules.userEmail.length, rules.userEmail.charValid]">
+                </v-text-field>
+            </div>
+            <v-btn :disabled="modDisable" color="btncolor" x-large block @click.prevent="modConfirm">수정</v-btn>
+            <!-- <div>
+                <div>
                     <v-row>
                         <label class="text-sm font-weight-bold mt-5 input-title">아이디 : </label>
                         <v-col cols="3">
@@ -37,31 +63,38 @@
                             </v-text-field>
                         </v-col>
                     </v-row>
+                    <v-row class="mt-4">
+                        <v-col md="8" class="mt-0 pt-0">
+                        </v-col>
+                        <v-col md="4" class="my-auto text-end mt-0 pt-0">
+                            <v-btn :disabled="resetDisable" :elevation="0" color="#4c4c4c"
+                                class="font-weight-bold text-white py-4 px-3 my-auto ms-1" small @click="resetMod">
+                                초기화
+                            </v-btn>
+                            <v-btn :disabled="modDisable" :elevation="0" color="#4c4c4c"
+                                class="font-weight-bold text-white py-4 px-3 my-auto ms-1" small
+                                @click.prevent="modConfirm">
+                                수정
+                            </v-btn>
+                        </v-col>
+                    </v-row>
                 </div>
-            </v-card>
-        </v-form>
-        <v-row class="mt-4">
-            <v-col md="8" class="mt-0 pt-0">
-            </v-col>
-            <v-col md="4" class="my-auto text-end mt-0 pt-0">
-                <v-btn :disabled="resetDisable" :elevation="0" color="#4c4c4c"
-                    class="font-weight-bold text-white py-4 px-3 my-auto ms-1" small @click="resetMod">
-                    초기화
-                </v-btn>
-                <v-btn :disabled="modDisable" :elevation="0" color="#4c4c4c"
-                    class="font-weight-bold text-white py-4 px-3 my-auto ms-1" small @click.prevent="modConfirm">
-                    수정
-                </v-btn>
-            </v-col>
-        </v-row>
-    </v-container>
+            </div> -->
+        </div>
+    </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import LoadingComponents from '@/components/LoadingComponents.vue'
+import ModalComponents from '@/components/ModalComponents.vue'
 
 export default {
     name: "my-page",
+    components: {
+        LoadingComponents,
+        ModalComponents
+    },
     watch: {
     },
     computed: {
@@ -91,6 +124,12 @@ export default {
     },
     data() {
         return {
+            loading: false,
+            msg: "",
+            upModal: false,
+            iconName: "",
+            modalTitle: "",
+            basicMd: true,
             modItem: {
                 user_name: "",
                 user_email: "",
@@ -131,13 +170,17 @@ export default {
     methods: {
         ...mapGetters('sessionStore', ['GET_SESSION_INFO']),
         getUserInfoAPI() {
+            this.msg = "사용자 정보 조회 중입니다.";
+            this.loading = true;
             this.getUserInfo.req.user_id = this.GET_SESSION_INFO().userInfo.user_id;
             this.$axios.post(this.$BASE_URL + '/userinfo/getuserinfo', this.getUserInfo.req).then(res => {
+                this.loading = false;
                 this.getUserInfo.res = res.data;
                 this.modItem.user_id = this.getUserInfo.res.user_id;
                 this.modItem.user_name = this.getUserInfo.res.user_name;
                 this.modItem.user_email = this.getUserInfo.res.user_email;
             }).catch(err => {
+                this.loading = false;
                 this.GLOBALFNC.err.commonErr(err)
             })
         },
@@ -147,39 +190,61 @@ export default {
             this.modItem.user_email = this.getUserInfo.res.user_email;
         },
         modConfirm() {
-            this.$swal({
-                text: "수정하시겠습니까?",
-                icon: "warning",
-                showCancelButton: true,
-                cancelButtonText: "취소",
-                confirmButtonText: "수정",
-                customClass: {
-                    confirmButton: "btn bg-gradient-success",
-                    cancelButton: "btn bg-gradient-danger",
-                },
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    this.updateUserInfoAPI();
-                }
-            });
+            this.basicMd = true;
+            this.iconName = "icon02"
+            this.modalTitle = "사용자 정보 수정"
+            this.msgHtml = "수장하시겠습니까?";
+            this.upModal = true;
+            // this.$swal({
+            //     text: "수정하시겠습니까?",
+            //     icon: "warning",
+            //     showCancelButton: true,
+            //     cancelButtonText: "취소",
+            //     confirmButtonText: "수정",
+            //     customClass: {
+            //         confirmButton: "btn bg-gradient-success",
+            //         cancelButton: "btn bg-gradient-danger",
+            //     },
+            // }).then((result) => {
+            //     if (result.isConfirmed) {
+            //         this.updateUserInfoAPI();
+            //     }
+            // });
         },
         updateUserInfoAPI() {
+            this.upModal = false;
+            this.basicMd = false;
+            this.loading = true;
             this.updateUserInfo.req.user_id = this.GET_SESSION_INFO().userInfo.user_id;
             this.updateUserInfo.req.user_name = this.modItem.user_name;
             this.updateUserInfo.req.user_email = this.modItem.user_email;
             this.$axios.post(this.$BASE_URL + '/userinfo/updateuserinfo', this.updateUserInfo.req).then(res => {
+                this.loading = false;
                 this.updateUserInfo.res = res.data;
-                this.$swal.fire("성공", "내정보가 수정되었습니다.", "success");
-                this.getUserInfoAPI();
+                if (this.updateUserInfo.res.success != "SUCC") {
+                    this.iconName = "icon03"
+                    this.modalTitle = "사용자 정보 수정 실패"
+                    this.msgHtml = "관리자에게 문의하세요.";
+                    this.upModal = true;
+                } else {
+                    this.iconName = "icon01"
+                    this.modalTitle = "성공"
+                    this.msgHtml = "수정되었습니다.";
+                    this.upModal = true;
+                }
+                // this.$swal.fire("성공", "내정보가 수정되었습니다.", "success");
+                // this.getUserInfoAPI();
             }).catch(err => {
+                this.loading = false;
                 this.GLOBALFNC.err.commonErr(err)
             })
+        },
+        modalConfirm() {
+            this.upModal = false;
         }
     }
 };
 </script>
-<style lang="css" scoped>
-.readonlyDisabled::v-deep .v-input__slot::before {
-    border-image: unset !important;
-}
+<style lang="scss" scoped>
+@import '~@/assets/scss/page/charge/charge.scss';
 </style>

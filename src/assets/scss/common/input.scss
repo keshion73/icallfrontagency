@@ -170,7 +170,20 @@ input[type=checkbox] {
   font-size: 1.6rem !important;
   font-weight: 700;
 
-  &.btncolor {
+  &.btntxt {
+    background: #fff !important;
+    color: #00648A !important;
+    border: 1px solid #00648A;
+    text-align: center;
+
+    &:hover {
+      background-color: #00648A !important;
+      color: #fff !important;
+    }
+  }
+
+  &.btncolor,
+  &.btnbg {
     background: #00648A !important;
     color: #fff !important;
     text-align: center;

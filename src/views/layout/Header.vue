@@ -108,11 +108,11 @@ export default {
         title: '내정보',
         item: [{
           title: '마이페이지',
-          to: '/',
+          to: '/myinfo/mypage',
         },
         {
           title: '비밀번호 변경',
-          to: '/'
+          to: '/myinfo/passwordinfo'
         },
         {
           title: '예치금 환불요청',
