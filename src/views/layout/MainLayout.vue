@@ -2,7 +2,7 @@
     <v-app>
         <Header></Header>
         <SubHeader v-if="!$vuetify.breakpoint.xs"></SubHeader>
-        <v-container fluid class="dist-wrap">
+        <v-container fluid class="main-wrap">
             <router-view></router-view>
         </v-container>
         <Footer></Footer>
@@ -27,5 +27,11 @@ export default {
     },
 };
 </script>
-    
-<style lang="scss"></style>
+<style lang="scss" scoped>
+main::v-deep {
+    .v-main__wrap {
+        min-height: 100%;
+        padding-bottom: 40px;
+    }
+}
+</style>

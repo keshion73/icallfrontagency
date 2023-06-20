@@ -1,7 +1,63 @@
 <template>
+    <div class="refund-page usim-page">
+        <div class="container">
+            <h2 class="text-h2">{{ $route.name }}</h2>
+            <div class="refund-info">
+                <div>
+                    <h4 class="text-h4">LG U+ USIM</h4>
+                </div>
+                <div class="d-flex">
+                    <div class="num">
+                        <p>현재 수</p>
+                        <p class="text-h2">{{ GET_SESSION_INFO().userInfo.lgu_usim_count }}</p>
+                    </div>
+                    <v-text-field ref="refLguCnt" v-model="lgu_usim_count" placeholder="추가 수량을 입력하세요." outlined
+                        hide-details="auto" background-color="#fff"
+                        :rules="[rules.inputLguCnt.length, rules.inputLguCnt.charValid]"></v-text-field>
+                </div>
+            </div>
+            <div class="refund-info">
+                <div>
+                    <h4 class="text-h4">SKT USIM</h4>
+                </div>
+                <div class="d-flex">
+                    <div class="num">
+                        <p>현재 수</p>
+                        <p class="text-h2">{{ GET_SESSION_INFO().userInfo.skt_usim_count }}</p>
+                    </div>
+                    <v-text-field ref="refSktCnt" placeholder="추가 수량을 입력하세요." v-model="skt_usim_count" outlined
+                        hide-details="auto" background-color="#fff"
+                        :rules="[rules.inputSktCnt.length, rules.inputSktCnt.charValid]">
+                    </v-text-field>
+                </div>
+            </div>
+            <div class="refund-info">
+                <div>
+                    <h4 class="text-h4">KT USIM</h4>
+                </div>
+                <div class="d-flex">
+                    <div class="num">
+                        <p>현재 수</p>
+                        <p class="text-h2">{{ GET_SESSION_INFO().userInfo.kt_usim_count }}</p>
+                    </div>
+                    <v-text-field ref="refKtCnt" v-model="kt_usim_count" placeholder="추가 수량을 입력하세요." outlined
+                        hide-details="auto" background-color="#fff"
+                        :rules="[rules.inputKtCnt.length, rules.inputKtCnt.charValid]"></v-text-field>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-h4">요청 사유</h4>
+                <v-textarea v-model="reason" placeholder="USIM 요청 사유를 입력해 주세요." outlined no-resize rows="10"
+                    hide-details="auto" auto-grow clearable counter></v-textarea>
+            </div>
+            <v-btn color="btncolor" x-large block @click="requestConfirm">USIM 요청</v-btn>
+        </div>
+    </div>
+</template>
+
+<!-- <template>
     <v-container fluid class="py-6 pt-0">
         <v-row class="mb-1 mt-6">
-            <!-- 헤더명 -->
             <v-col md="12" class="me-auto text-start">
                 <h4 class="text-h4 text-sm font-weight-bold ml-5">
                     USIM 요청
@@ -89,7 +145,7 @@
             </v-col>
         </v-row>
     </v-container>
-</template>
+</template> -->
 <script>
 import { mapGetters } from 'vuex'
 
@@ -178,4 +234,26 @@ export default {
     }
 };
 </script>
-<style></style>
+<style lang="scss" scoped>
+@import '~@/assets/scss/page/charge/charge.scss';
+
+.usim-page {
+    .refund-info {}
+}
+
+::v-deep {
+    .refund-info {
+        .v-input__control {
+            max-width: 166px;
+        }
+
+        .v-input__slot {
+            max-width: 166px;
+
+            fieldset {
+                top: -6px
+            }
+        }
+    }
+}
+</style>

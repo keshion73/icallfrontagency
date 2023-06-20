@@ -152,7 +152,7 @@ export default {
                     if (init_login == true) {
                         this.$router.push('/init');
                     } else {
-                        this.$router.push('/charge/charge');
+                        this.$router.push('/main');
                     }
                 } else if (res.data.status == "510") {
                     // this.$swal({

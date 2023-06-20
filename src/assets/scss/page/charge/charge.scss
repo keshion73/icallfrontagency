@@ -337,6 +337,38 @@
   }
 }
 
+.usim-page {
+  .refund-info {
+    .text-h4 {
+      margin-bottom: 0 !important;
+    }
+
+    .d-flex {
+      padding: 22px 32px !important;
+      align-items: center;
+    }
+
+    .num {
+      p:first-child {
+        font-size: 1.2rem;
+        color: #399FC7;
+
+      }
+
+      .text-h2 {
+        font-size: 3.2rem !important;
+        line-height: 1;
+        margin-bottom: 0;
+      }
+    }
+
+    .v-input {
+      justify-content: end;
+    }
+  }
+
+}
+
 @include pc {
   .charge-page {
 

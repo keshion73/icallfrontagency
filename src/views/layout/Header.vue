@@ -96,11 +96,11 @@ export default {
         title: 'USIM',
         item: [{
           title: 'USIM 요청',
-          to: '/',
+          to: '/usim/request',
         },
         {
           title: 'USIM 요청 내역',
-          to: '/'
+          to: '/usim/history'
         }
         ]
       },

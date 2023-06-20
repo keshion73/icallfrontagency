@@ -70,7 +70,8 @@
                         <span :class="getClass(item.progress_name)">{{ item.progress_name }}</span>
                     </template>
                 </v-data-table>
-                <v-pagination v-model="page" :length="15" :total-visible="7" circle active-color="#399FC7"></v-pagination>
+                <v-pagination :total-visible="7" active-color="#399FC7" color="#4c4c4c" v-model="page" :length="pageCount"
+                    circle></v-pagination>
             </div>
         </div>
     </div>
