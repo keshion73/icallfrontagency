@@ -9,7 +9,7 @@
         </ModalComponents>
         <div class="container d-flex">
             <v-breadcrumbs>
-                <v-breadcrumbs-item to="/dashboard" active-class="active-breadcrumb">
+                <v-breadcrumbs-item to="/main" active-class="active-breadcrumb">
                     <img src="@/assets/images/common/icon-home.svg" alt="">
                 </v-breadcrumbs-item>
                 <li><v-icon color="#399FC7">fa-chevron-right</v-icon></li>
