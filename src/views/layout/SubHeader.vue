@@ -27,7 +27,7 @@
                         <!-- <button><img src="@/assets/images/common/icon-re.svg" alt=""
                                 style="margin-left: 4px;vertical-align: middle;"></button> -->
                     </div>
-                    <button class="logout-btn" v-if="$vuetify.breakpoint.xs">로그아웃</button>
+                    <button class="logout-btn" v-if="$vuetify.breakpoint.xs" @click="logoutConfirm()">로그아웃</button>
                 </div>
                 <!-- <div class="d-flex">
                     <p class="mark">잔액</p>
@@ -42,9 +42,9 @@
                 </div>
                 <div class="d-flex">
                     <p class="mark">USIM</p>
-                    <p><span>LG U+</span>0</p>
-                    <p><span>SKT</span>0</p>
-                    <p><span>KT</span>0</p>
+                    <p><span>LG U+</span>{{ GET_SESSION_INFO().userInfo.lgu_usim_count }}</p>
+                    <p><span>SKT</span>{{ GET_SESSION_INFO().userInfo.skt_usim_count }}</p>
+                    <p><span>KT</span>{{ GET_SESSION_INFO().userInfo.kt_usim_count }}</p>
                 </div>
                 <div class="d-flex">
                     <p class="mark">담당자</p>
