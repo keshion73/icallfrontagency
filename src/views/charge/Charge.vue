@@ -710,6 +710,11 @@ export default {
                     // this.loginInfo.userInfo.deposit_amount = this.smatelFeeCharge.req.result_deposit;
                     // this.ACT_SESSION_INFO(this.loginInfo);
                     // this.$router.push('/charge/history');
+                } else if (this.smatelFeeCharge.res.rslt_cd == "5000") {
+                    this.iconName = "icon03"
+                    this.modalTitle = "실패"
+                    this.msgHtml = "예치금이 정확하지 않습니다.<br>로그인을 다시 해주세요.";
+                    this.upModal = true;
                 } else {
                     this.iconName = "icon03"
                     this.modalTitle = "실패"
@@ -764,6 +769,11 @@ export default {
                         // this.loginInfo.userInfo.deposit_amount = this.powercallFeeCharge.req.result_deposit;
                         // this.ACT_SESSION_INFO(this.loginInfo);
                         // this.$router.push('/charge/history');
+                    } else if (this.powercallFeeCharge.res.success == "DEFR") {
+                        this.iconName = "icon03"
+                        this.modalTitle = "실패"
+                        this.msgHtml = "예치금이 정확하지 않습니다.<br>로그인을 다시 해주세요.";
+                        this.upModal = true;
                     } else {
                         this.iconName = "icon03"
                         this.modalTitle = "실패"
@@ -790,6 +800,11 @@ export default {
                         // this.loginInfo.userInfo.deposit_amount = this.powercallFeeCharge.res.result_amount;
                         // this.ACT_SESSION_INFO(this.loginInfo);
                         // this.$router.push('/charge/history');
+                    } else if (this.powercallFeeCharge.res.success == "DEFR") {
+                        this.iconName = "icon03"
+                        this.modalTitle = "실패"
+                        this.msgHtml = "예치금이 정확하지 않습니다.<br>로그인을 다시 해주세요.";
+                        this.upModal = true;
                     } else {
                         this.iconName = "icon03"
                         this.modalTitle = "실패"
