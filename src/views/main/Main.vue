@@ -9,10 +9,10 @@
         <div class="btn d-flex">
           <v-btn @click="openingClick">개통현황 확인하기<span><img src="@/assets/images/common/icon-btnarrow.svg"
                 alt=""></span></v-btn>
-          <router-link to="/charge/charge"><v-btn>고객 선불 충전하기<span><img src="@/assets/images/common/icon-btnarrow.svg"
-                  alt=""></span></v-btn></router-link>
-          <router-link to="/usim/request"><v-btn>USIM 충전하기<span><img src="@/assets/images/common/icon-btnarrow.svg"
-                  alt=""></span></v-btn></router-link>
+          <v-btn @click="movePage('/charge/charge')">고객 선불 충전하기<span><img src="@/assets/images/common/icon-btnarrow.svg"
+                alt=""></span></v-btn>
+          <v-btn @click="movePage('/usim/request')">USIM 충전하기<span><img src="@/assets/images/common/icon-btnarrow.svg"
+                alt=""></span></v-btn>
 
         </div>
       </div>
@@ -21,7 +21,7 @@
       <v-tabs v-model="tab" height="40px" hideSlider>
         <v-tab>선불 요금제</v-tab>
         <v-tab>후불 요금제</v-tab>
-        <v-tab>개통 정책</v-tab>
+        <!-- <v-tab>개통 정책</v-tab> -->
       </v-tabs>
       <v-window v-model="tab">
         <v-window-item :transition="false">
@@ -628,6 +628,9 @@ export default {
   methods: {
     openingClick() {
       alert("준비중입니다");
+    },
+    movePage(routeName) {
+      this.$router.push(routeName);
     }
   }
 }

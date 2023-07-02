@@ -1,12 +1,5 @@
 <template>
     <div class="sub-header">
-        <ModalComponents @close="upModal = false" v-if="upModal" :icon="'icon02'" :title="'로그아웃'">
-            <p slot="mes">정말 로그아웃하시겠습니까?</p>
-            <div slot="btn">
-                <v-btn x-large @click="upModal = false" class="btntxt">취소</v-btn>
-                <v-btn color="btnbg" x-large @click="logout()">확인</v-btn>
-            </div>
-        </ModalComponents>
         <div class="container d-flex">
             <v-breadcrumbs>
                 <v-breadcrumbs-item to="/main" active-class="active-breadcrumb">
@@ -60,15 +53,23 @@
                 <button class="logout-btn" v-if="!$vuetify.breakpoint.xs" @click="logoutConfirm()">로그아웃</button>
             </div>
         </div>
+        <ModalComponents @close="upModal = false" v-if="upModal" :icon="'icon02'" :title="'로그아웃'">
+            <p slot="mes">정말 로그아웃하시겠습니까?</p>
+            <div slot="btn">
+                <v-btn x-large @click="upModal = false" class="btntxt">취소</v-btn>
+                <v-btn color="btnbg" x-large @click="logout()">확인</v-btn>
+            </div>
+        </ModalComponents>
     </div>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import ModalComponents from '@/components/ModalComponents.vue'
 
+
 export default {
     components: {
-        ModalComponents
+        ModalComponents,
     },
     mounted() {
     },
