@@ -70,14 +70,11 @@ export default {
       drawer: false,
       submenu: [{
         title: '가입자 현황',
-        item: [{
-          title: '개통 정보',
-          // to: '/',
-        },
-        {
-          title: '개통 현황',
-          // to: '/'
-        }
+        item: [
+          {
+            title: '개통 현황',
+            to: '/opening/situation'
+          }
         ]
       },
       {

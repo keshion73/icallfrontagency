@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Login from '@/router/modules/login.js'
 import Error from '@/views/error/Error'
 import Main from '@/router/modules/main.js'
+import Opening from '@/router/modules/opening.js'
 import Charge from '@/router/modules/charge.js'
 import Myinfo from '@/router/modules/myinfo.js'
 import Usim from '@/router/modules/usim.js'
@@ -15,6 +16,7 @@ export default new Router({
   routes: [
     ...Login,
     ...Main,
+    ...Opening,
     ...Charge,
     ...Myinfo,
     ...Usim,
