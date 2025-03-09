@@ -19,6 +19,7 @@ Vue.prototype.GLOBALVAL = GlobalValue
 Vue.prototype.GLOBALFNC = GlobalFunction
 Vue.config.productionTip = false;
 
+//테스트
 router.beforeEach((to, from, next) => {
   //authenticationState는 유저가 로그인이 되어있는지 아닌지 값을 가져와 판별해준다.
   let isLogin = store.getters['sessionStore/GET_ISLOGIN_INFO'];
